@@ -1,213 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BoQ Generator — Free Automated Bill of Quantities | YeMezgeb</title>
-<meta name="description" content="Upload a dimensioned floor plan and generate a free SMM East Africa–aligned Bill of Quantities in Ethiopian Birr (ETB). Grouped by trade, exportable to PDF and Excel.">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoQ Generator — Free Automated Bill of Quantities | YeMezgeb</title>
+  <meta name="description" content="Advanced and quick BoQ generation for Ethiopian construction projects — manual estimator workflow, pricing, export, and project tracking.">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to main content</a>
-<header class="site-header">
-  <div class="nav-wrap">
-    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
-    <nav aria-label="Main navigation">
-      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="boq.html" aria-current="page">BoQ Generator</a></li>
-        <li><a href="tenders.html">Top Bid</a></li>
-        <li><a href="legal.html">Legal Hub</a></li>
-        <li><a href="marketplace.html">Design Market</a></li>
-        <li><a href="api-docs.html">API Docs</a></li>
-      </ul>
-      <a href="marketplace.html#join" class="nav-cta">Join Free</a>
-    </nav>
-  </div>
-</header>
+  <a class="skip-link" href="#main">Skip to main content</a>
 
-<main id="main">
-  <section class="page-hero">
-    <div class="container">
-      <span class="kicker" style="color:var(--yellow);">Module 1</span>
-      <h1>Automated Bill of Quantities Generator</h1>
-      <p>SMM for East Africa standard · ETB default currency · Automated takeoff from PDF, PNG &amp; JPG plans · Free PDF &amp; Excel export · Saved to your free account.</p>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a href="index.html" class="brand" aria-label="YeMezgeb homepage">
+        <span class="logo" aria-hidden="true">የግ</span>
+        <span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="boq.html" aria-current="page">BoQ Generator</a></li>
+          <li><a href="tenders.html">Top Bid</a></li>
+          <li><a href="legal.html">Legal Hub</a></li>
+          <li><a href="marketplace.html">Design Market</a></li>
+          <li><a href="api-docs.html">API Docs</a></li>
+        </ul>
+        <a href="marketplace.html#join" class="nav-cta">Join Free</a>
+      </nav>
     </div>
-  </section>
+  </header>
 
-  <section>
-    <div class="container boq-layout">
-      <div class="card">
-        <h3>Project Details</h3>
-        <form id="boq-form" onsubmit="return addRow(event)">
-          <label for="pname">Project name</label>
-          <input id="pname" type="text" value="G+1 Residence — Bole, Addis Ababa" required>
-          <label for="ptrade">Trade section</label>
-          <select id="ptrade">
-            <option>1 — Preliminaries</option>
-            <option>2 — Substructure &amp; Foundations</option>
-            <option>3 — Superstructure &amp; Masonry</option>
-            <option>4 — Roofing &amp; Finishes</option>
-            <option>5 — Plumbing &amp; Electrical Services</option>
-            <option>6 — External Works</option>
-          </select>
-          <label for="pitem">Item description</label>
-          <input id="pitem" type="text" placeholder="e.g. 350mm reinforced concrete foundation" required>
-          <label for="punit">Unit</label>
-          <select id="punit">
-            <option>m²</option><option>m³</option><option>m</option><option>No.</option><option>LS (Lump Sum)</option>
-          </select>
-          <div class="field-row">
-            <div><label for="pqty">Quantity</label><input id="pqty" type="number" min="0" step="0.01" value="1" required></div>
-            <div><label for="prate">Unit rate (Br)</label><input id="prate" type="number" min="0" step="0.01" value="0" required></div>
+  <main id="main">
+    <section class="page-hero boq-hero">
+      <div class="container">
+        <span class="kicker">Module 1</span>
+        <h1>BoQ Generation Studio</h1>
+        <p>Fast trade pricing for drawing-based takeoff or a full manual estimator workflow for projects without uploaded drawings.</p>
+
+        <div class="boq-mode-toggle" role="tablist" aria-label="BoQ generation modes">
+          <button class="active" type="button" data-target="quick-boq">Quick BOQ</button>
+          <button type="button" data-target="advanced-boq">Advanced BOQ</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="quick-boq" class="boq-mode-panel active">
+      <div class="container boq-layout">
+        <div class="card">
+          <div class="panel-head">
+            <span class="eyebrow">Quick build</span>
+            <h3>Project Details</h3>
           </div>
-          <button class="btn btn-primary" type="submit" style="margin-top:1rem; width:100%;">Add Item to BoQ</button>
-        </form>
-        <div class="note">Automated takeoff: upload a dimensioned floor plan (PDF/PNG/JPG) and dimensions are parsed into line items automatically. Manual entry here works without an upload.</div>
-        <label for="plan" style="margin-top:1.2rem;">Floor plan upload (demo)</label>
-        <input id="plan" type="file" accept=".pdf,.png,.jpg,.jpeg">
-        <div style="margin-top:1rem;">
-          <label for="my-projects">My saved projects (API)</label>
-          <select id="my-projects" onchange="if(this.value) loadProject(this.value)"><option value="">— My saved projects —</option></select>
-          <button class="btn btn-yellow" type="button" style="margin-top:.7rem; width:100%;" onclick="saveProject()">💾 Save BoQ to My Account</button>
+
+          <form id="boq-form" onsubmit="return addRow(event)">
+            <label for="pname">Project name</label>
+            <input id="pname" type="text" value="G+1 Residence — Bole, Addis Ababa" required>
+
+            <label for="ptrade">Trade section</label>
+            <select id="ptrade">
+              <option>1 — Preliminaries</option>
+              <option>2 — Substructure &amp; Foundations</option>
+              <option>3 — Superstructure &amp; Masonry</option>
+              <option>4 — Roofing &amp; Finishes</option>
+              <option>5 — Plumbing &amp; Electrical Services</option>
+              <option>6 — External Works</option>
+            </select>
+
+            <label for="pitem">Item description</label>
+            <input id="pitem" type="text" placeholder="e.g. 350mm reinforced concrete foundation" required>
+
+            <label for="punit">Unit</label>
+            <select id="punit">
+              <option>m²</option>
+              <option>m³</option>
+              <option>m</option>
+              <option>No.</option>
+              <option>LS (Lump Sum)</option>
+            </select>
+
+            <div class="field-row">
+              <div>
+                <label for="pqty">Quantity</label>
+                <input id="pqty" type="number" min="0" step="0.01" value="1" required>
+              </div>
+              <div>
+                <label for="prate">Unit rate (Br)</label>
+                <input id="prate" type="number" min="0" step="0.01" value="0" required>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit" style="margin-top:1rem; width:100%;">Add Item to BoQ</button>
+          </form>
+
+          <div class="note">
+            Automated takeoff: upload a dimensioned floor plan (PDF, PNG or JPG) and dimensions are parsed into line items automatically. Manual entry works without any upload.
+          </div>
+
+          <label for="plan" style="margin-top:1.2rem;">Floor plan upload (demo)</label>
+          <input id="plan" type="file" accept=".pdf,.png,.jpg,.jpeg">
+
+          <div style="margin-top:1rem;">
+            <label for="my-projects">My saved projects (API)</label>
+            <select id="my-projects" onchange="if(this.value) loadProject(this.value)">
+              <option value="">— My saved projects —</option>
+            </select>
+            <button class="btn btn-yellow" type="button" style="margin-top:.7rem; width:100%;" onclick="saveProject()">💾 Save BoQ to My Account</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="table-wrap">
+            <table aria-label="Bill of Quantities items">
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Description</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Rate (Br)</th>
+                  <th>Amount (Br)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="boq-body">
+                <tr><td>A.1</td><td>Site clearance &amp; mobilization</td><td>LS</td><td>1</td><td>45,000.00</td><td>45,000.00</td><td><button class="btn btn-mini" type="button" onclick="delRow(this)">Delete</button></td></tr>
+                <tr><td>B.1</td><td>Excavation in ordinary soil</td><td>m³</td><td>120</td><td>185.00</td><td>22,200.00</td><td><button class="btn btn-mini" type="button" onclick="delRow(this)">Delete</button></td></tr>
+                <tr><td>B.2</td><td>C-25 reinforced concrete footing</td><td>m³</td><td>18.5</td><td>14,300.00</td><td>264,550.00</td><td><button class="btn btn-mini" type="button" onclick="delRow(this)">Delete</button></td></tr>
+                <tr><td>C.1</td><td>Hollow concrete block wall 350mm</td><td>m²</td><td>210</td><td>1,275.00</td><td>267,750.00</td><td><button class="btn btn-mini" type="button" onclick="delRow(this)">Delete</button></td></tr>
+                <tr><td>D.1</td><td>Cement-based plaster, internal</td><td>m²</td><td>395</td><td>420.00</td><td>165,900.00</td><td><button class="btn btn-mini" type="button" onclick="delRow(this)">Delete</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="boq-total">
+            <span>Grand Total (ETB, incl. 15% VAT)</span>
+            <b id="grand-total">Br 0.00</b>
+          </div>
+
+          <div class="export-row">
+            <button class="btn btn-primary" onclick="exportBoQ('csv')" type="button">⬇ Download Excel (CSV)</button>
+            <button class="btn btn-yellow" onclick="window.print()" type="button">⬇ Download PDF (Print)</button>
+          </div>
+
+          <p class="small-note">Rates are indicative unit rates per SMM for East Africa conventions; quantities follow the standard measurement order (Preliminaries → External Works).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="advanced-boq" class="boq-mode-panel">
+      <div class="container advanced-boq-shell">
+        <div class="card advanced-panel">
+          <div class="panel-head">
+            <span class="eyebrow">Advanced estimator</span>
+            <h3>Manual BOQ Builder</h3>
+          </div>
+
+          <form id="advanced-boq-form" class="advanced-form" onsubmit="event.preventDefault(); addAdvancedItem();">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="adv-project-name">Project name</label>
+                <input id="adv-project-name" type="text" value="Commercial Office Block — Addis Ababa" required>
+              </div>
+              <div class="form-group">
+                <label for="adv-project-type">Project type</label>
+                <select id="adv-project-type">
+                  <option>Residential</option>
+                  <option selected>Commercial</option>
+                  <option>Industrial</option>
+                  <option>Institutional</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="adv-location">Location</label>
+                <input id="adv-location" type="text" value="Bole, Addis Ababa" required>
+              </div>
+              <div class="form-group">
+                <label for="adv-client">Client</label>
+                <input id="adv-client" type="text" value="Mulugeta Investment PLC" required>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="adv-item-name">Item description</label>
+                <input id="adv-item-name" type="text" placeholder="e.g. 150mm block wall with cement plaster" required>
+              </div>
+              <div class="form-group">
+                <label for="adv-unit">Unit</label>
+                <select id="adv-unit">
+                  <option>m²</option>
+                  <option>m³</option>
+                  <option>m</option>
+                  <option>No.</option>
+                  <option>LS</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="adv-qty">Quantity</label>
+                <input id="adv-qty" type="number" min="0" step="0.01" value="1" required>
+              </div>
+              <div class="form-group">
+                <label for="adv-rate">Unit rate (Br)</label>
+                <input id="adv-rate" type="number" min="0" step="0.01" value="0" required>
+              </div>
+            </div>
+
+            <div class="boq-action-row">
+              <button class="btn btn-primary" type="submit">Add Item</button>
+              <button class="btn btn-yellow" type="button" id="adv-save-draft">Save Draft</button>
+              <button class="btn btn-ghost-dark" type="button" id="adv-clear">Clear</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card summary-stack">
+          <div class="panel-head">
+            <span class="eyebrow">Cost snapshot</span>
+            <h3>Project Estimate</h3>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Estimated value</span>
+              <strong id="summary-total">Br 0.00</strong>
+            </div>
+            <div class="summary-card accent">
+              <span>Labour</span>
+              <strong id="summary-labour">Br 0.00</strong>
+            </div>
+            <div class="summary-card warning">
+              <span>Materials</span>
+              <strong id="summary-materials">Br 0.00</strong>
+            </div>
+            <div class="summary-card success">
+              <span>Profit margin</span>
+              <strong id="summary-profit">Br 0.00</strong>
+            </div>
+          </div>
+
+          <div class="mini-metrics">
+            <div>
+              <small>Location</small>
+              <strong id="mini-location">Bole, Addis Ababa</strong>
+            </div>
+            <div>
+              <small>Trade mix</small>
+              <strong> 6 sections</strong>
+            </div>
+            <div>
+              <small>Mode</small>
+              <strong>Manual estimator</strong>
+            </div>
+          </div>
         </div>
       </div>
 
+      <div class="container">
+        <div class="card advanced-table-card">
+          <div class="panel-head compact">
+            <span class="eyebrow">Schedule</span>
+            <h3>BoQ Line Items</h3>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-label="Advanced BOQ items">
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Description</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Rate (Br)</th>
+                  <th>Amount (Br)</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="advanced-boq-body">
+                <tr>
+                  <td colspan="7" class="empty-state">No items yet — add the first BOQ line to start the estimate.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bottom-bar">
+            <div class="project-total-box">
+              <span>Total estimate</span>
+              <strong id="advanced-total">Br 0.00</strong>
+            </div>
+            <div class="bottom-actions">
+              <button class="btn btn-primary" type="button" onclick="exportAdvancedBoQ()">Export to Excel</button>
+              <button class="btn btn-yellow" type="button" onclick="printAdvancedBoQ()">Print / PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
       <div>
-        <div class="table-wrap">
-          <table aria-label="Bill of Quantities items">
-            <thead><tr><th>Ref</th><th>Description</th><th>Unit</th><th>Qty</th><th>Rate (Br)</th><th>Amount (Br)</th><th></th></tr></thead>
-            <tbody id="boq-body">
-              <tr><td>A.1</td><td>Site clearance &amp; mobilization</td><td>LS</td><td>1</td><td>45,000.00</td><td>45,000.00</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td></tr>
-              <tr><td>B.1</td><td>Excavation in ordinary soil</td><td>m³</td><td>120</td><td>185.00</td><td>22,200.00</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td></tr>
-              <tr><td>B.2</td><td>C-25 reinforced concrete footing</td><td>m³</td><td>18.5</td><td>14,300.00</td><td>264,550.00</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td></tr>
-              <tr><td>C.1</td><td>Hollow concrete block wall 350mm</td><td>m²</td><td>210</td><td>1,275.00</td><td>267,750.00</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td></tr>
-              <tr><td>D.1</td><td>Cement-based plaster, internal</td><td>m²</td><td>395</td><td>420.00</td><td>165,900.00</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="boq-total"><span>Grand Total (ETB, incl. 15% VAT)</span><b id="grand-total">Br 0.00</b></div>
-        <div class="export-row">
-          <button class="btn btn-primary" onclick="exportBoQ('csv')">⬇ Download Excel (CSV)</button>
-          <button class="btn btn-yellow" onclick="window.print()">⬇ Download PDF (Print)</button>
-        </div>
-        <p style="color:var(--muted); font-size:.85rem; margin-top:.6rem;">Rates are indicative unit rates per SMM for East Africa conventions; quantities follow the standard measurement order (Preliminaries → External Works).</p>
+        <h4>YeMezgeb · የግንባታ መድረክ</h4>
+        <p>The free construction, bidding and architectural marketplace for Ethiopia. Core services are free forever; monetization limited to optional promotions and low fees on design sales.</p>
+        <div class="pay-badges"><span>Telebirr</span><span>CBE Birr</span><span>Chapa</span><span>Santim Pay</span></div>
+      </div>
+      <div>
+        <h4>Modules</h4>
+        <ul>
+          <li><a href="boq.html">BoQ Generator</a></li>
+          <li><a href="tenders.html">Top Bid</a></li>
+          <li><a href="legal.html">Legal Hub</a></li>
+          <li><a href="marketplace.html">Design Market</a></li>
+          <li><a href="api-docs.html">API Docs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="marketplace.html#join">Register</a></li>
+          <li><a href="legal.html#standards">Standards</a></li>
+          <li><a href="tenders.html#alerts">Tender Alerts</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li>
+        </ul>
       </div>
     </div>
-  </section>
+    <div class="footer-bottom">© 2026 YeMezgeb. Free access for primary services — built for the Ethiopian construction sector.</div>
+  </footer>
 
-  <section style="background:var(--card); border-top:1px solid var(--line);">
-    <div class="container">
-      <div class="section-head"><span class="kicker">Trade Breakdown</span><h2>Items Auto-Grouped by SMM Trade Sections</h2></div>
-      <div class="grid grid-3">
-        <div class="card"><h3>1 · Preliminaries</h3><p>Site clearance, mobilization, temporary works, insurances.</p></div>
-        <div class="card"><h3>2 · Substructure &amp; Foundations</h3><p>Excavation, blinding, reinforcement, concrete footings, damp-proofing.</p></div>
-        <div class="card"><h3>3 · Superstructure &amp; Masonry</h3><p>Columns, beams, slabs, HCB walls, lintels, columns finishes.</p></div>
-        <div class="card"><h3>4 · Roofing &amp; Finishes</h3><p>Roof slabs/coverings, plastering, tiling, painting, ceilings, joinery.</p></div>
-        <div class="card"><h3>5 · Plumbing &amp; Electrical</h3><p>Water supply, drainage, sanitary fittings, wiring, DB, lighting points.</p></div>
-        <div class="card"><h3>6 · External Works</h3><p>Fencing, gates, paving, landscaping, external drainage.</p></div>
-      </div>
-    </div>
-  </section>
-</main>
+  <script src="app.js"></script>
+  <script>
+    const boqModeButtons = document.querySelectorAll('.boq-mode-toggle button');
+    const boqPanels = document.querySelectorAll('.boq-mode-panel');
 
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">Free BoQ generation for every Ethiopian project. PDF and Excel downloads are instant and always free.</p></div>
-    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li>
-        <li><a href="api-docs.html">API Docs</a></li></ul></div>
-    <div><h4>Standard</h4><ul><li>SMM for East Africa</li><li>ETB default currency</li><li>Trade-grouped output</li></ul></div>
-    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
-  </div>
-  <div class="footer-bottom">© 2026 YeMezgeb — Module 1: Automated BoQ Generator.</div>
-</footer>
-
-<script src="app.js"></script>
-<script>
-var fmt = function(n){ return n.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); };
-var currentProjectId = null;
-function addRow(e){
-  e.preventDefault();
-  var trade=document.getElementById('ptrade').value, item=document.getElementById('pitem').value,
-      unit=document.getElementById('punit').value, qty=parseFloat(document.getElementById('pqty').value)||0,
-      rate=parseFloat(document.getElementById('prate').value)||0;
-  var ref=trade.split('—')[0].trim()+'.'+(document.querySelectorAll('#boq-body tr').length+1);
-  var tr=document.createElement('tr'); tr.dataset.apiId='';
-  tr.innerHTML='<td>'+ref+'</td><td></td><td>'+unit+'</td><td>'+qty+'</td><td>'+fmt(rate)+'</td><td>'+fmt(qty*rate)+'</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td>';
-  tr.cells[1].textContent = item;
-  document.getElementById('boq-body').appendChild(tr);
-  document.getElementById('pitem').value=''; document.getElementById('pqty').value='1'; document.getElementById('prate').value='0';
-  updateTotal(); return false;
-}
-async function delRow(b){
-  var id=b.closest('tr').dataset.apiId;
-  b.closest('tr').remove(); updateTotal();
-  if (id && YM.token) { try { await ymApi('/api/boq/items/'+id, {method:'DELETE'}); } catch(e){} }
-}
-function updateTotal(){
-  var t=0; document.querySelectorAll('#boq-body tr').forEach(function(tr){
-    var amt=parseFloat((tr.cells[5]?tr.cells[5].textContent:'0').replace(/,/g,''))||0; t+=amt; });
-  document.getElementById('grand-total').textContent='Br '+fmt(t*1.15);
-}
-async function saveProject(){
-  if (!YM.token) { alert('Please log in (or register free) first so your BoQ can be saved to your account.'); return; }
-  var name=document.getElementById('pname').value.trim();
-  if (!name) { alert('Enter a project name first.'); return; }
-  try {
-    var proj = await ymApi('/api/boq/projects', {method:'POST', body:{name:name}});
-    var rows = document.querySelectorAll('#boq-body tr');
-    for (var i=0;i<rows.length;i++) {
-      var c=rows[i].cells;
-      var saved = await ymApi('/api/boq/projects/'+proj.id+'/items', {method:'POST', body:{
-        trade:c[0].textContent.split('.')[0]+' — Trade', description:c[1].textContent,
-        unit:c[2].textContent, qty:parseFloat(c[3].textContent)||0, rate:parseFloat(c[4].textContent.replace(/,/g,''))||0 }});
-      rows[i].dataset.apiId = saved.id;
-    }
-    currentProjectId = proj.id;
-    await loadProjectList();
-    alert('Saved "'+name+'" to your account ('+rows.length+' items).');
-  } catch(e){ alert('Save failed: '+e.message); }
-}
-async function loadProject(id){
-  try {
-    var d = await ymApi('/api/boq/projects/'+id+'/items');
-    currentProjectId = d.project.id;
-    document.getElementById('pname').value = d.project.name;
-    var body=document.getElementById('boq-body'); body.innerHTML='';
-    d.items.forEach(function(it){
-      var tr=document.createElement('tr'); tr.dataset.apiId=it.id;
-      tr.innerHTML='<td></td><td></td><td>'+it.unit+'</td><td>'+it.qty+'</td><td>'+fmt(it.rate)+'</td><td>'+fmt(it.qty*it.rate)+'</td><td><button class="btn" style="padding:.2rem .6rem;" onclick="delRow(this)">✕</button></td>';
-      tr.cells[0].textContent = it.trade.split('—')[0].trim()+'.'+it.id;
-      tr.cells[1].textContent = it.description;
-      body.appendChild(tr);
+    boqModeButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        boqModeButtons.forEach(function(btn) { btn.classList.toggle('active', btn === button); });
+        const target = button.getAttribute('data-target');
+        boqPanels.forEach(function(panel) {
+          panel.classList.toggle('active', panel.id === target);
+        });
+      });
     });
-    updateTotal();
-  } catch(e){ alert('Load failed: '+e.message); }
-}
-async function loadProjectList(){
-  if (!YM.token) return;
-  try {
-    var list = await ymApi('/api/boq/projects');
-    var sel = document.getElementById('my-projects');
-    sel.innerHTML = '<option value="">— My saved projects —</option>';
-    list.forEach(function(p){ var o=document.createElement('option'); o.value=p.id; o.textContent=p.name; sel.appendChild(o); });
-  } catch(e){}
-}
-document.addEventListener('DOMContentLoaded', function(){
-  updateTotal();
-  if (YM.user) loadProjectList();
-});
-function exportBoQ(type){
-  var rows=[['Ref','Description','Unit','Qty','Rate (Br)','Amount (Br)']];
-  document.querySelectorAll('#boq-body tr').forEach(function(tr){
-    rows.push([tr.cells[0].textContent,tr.cells[1].textContent,tr.cells[2].textContent,tr.cells[3].textContent,tr.cells[4].textContent,tr.cells[5].textContent]);
-  });
-  rows.push(['','Grand Total incl. 15% VAT','','','','Br '+document.getElementById('grand-total').textContent.replace('Br ','')]);
-  var csv=rows.map(function(r){return r.join(',');}).join('\n');
-  var a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='YeMezgeb_BoQ.csv'; a.click();
-}
-</script>
+
+    function formatCurrency(value) {
+      return 'Br ' + Number(value || 0).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function generateAdvancedRef(index) {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const letter = letters[(index % 26)] || 'A';
+      return letter + '.' + (Math.floor(index / 26) + 1);
+    }
+
+    const advancedItems = [];
+
+    function addAdvancedItem() {
+      const name = document.getElementById('adv-item-name').value.trim();
+      const unit = document.getElementById('adv-unit').value;
+      const qty = Number(document.getElementById('adv-qty').value || 0);
+      const rate = Number(document.getElementById('adv-rate').value || 0);
+
+      if (!name || qty <= 0 || rate < 0) {
+        alert('Please complete the item description, quantity and rate before adding a BOQ line.');
+        return;
+      }
+
+      const amount = qty * rate;
+      advancedItems.push({
+        name,
+        unit,
+        qty,
+        rate,
+        amount
+      });
+
+      renderAdvancedTable();
+      document.getElementById('advanced-boq-form').reset();
+      document.getElementById('adv-project-name').value = document.getElementById('adv-project-name').value || 'New project';
+      document.getElementById('adv-location').value = document.getElementById('adv-location').value || 'Addis Ababa';
+      document.getElementById('adv-client').value = document.getElementById('adv-client').value || 'Client';
+      document.getElementById('adv-qty').value = '1';
+      document.getElementById('adv-rate').value = '0';
+      document.getElementById('mini-location').textContent = document.getElementById('adv-location').value;
+    }
+
+    function renderAdvancedTable() {
+      const tableBody = document.getElementById('advanced-boq-body');
+      if (!advancedItems.length) {
+        tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">No items yet — add the first BOQ line to start the estimate.</td></tr>';
+        updateAdvancedTotals();
+        return;
+      }
+
+      let total = 0;
+      tableBody.innerHTML = advancedItems.map(function(item, index) {
+        total += item.amount;
+        return '<tr>' +
+          '<td>' + generateAdvancedRef(index) + '</td>' +
+          '<td>' + item.name + '</td>' +
+          '<td>' + item.unit + '</td>' +
+          '<td>' + Number(item.qty).toLocaleString() + '</td>' +
+          '<td>' + formatCurrency(item.rate) + '</td>' +
+          '<td>' + formatCurrency(item.amount) + '</td>' +
+          '<td><button class="btn btn-mini danger" type="button" onclick="removeAdvancedItem(' + index + ')">Remove</button></td>' +
+          '</tr>';
+      }).join('');
+
+      updateAdvancedTotals(total);
+    }
+
+    function updateAdvancedTotals(totalAmount) {
+      const total = Number(totalAmount || 0);
+      const labour = total * 0.38;
+      const materials = total * 0.47;
+      const profit = total * 0.15;
+
+      document.getElementById('summary-total').textContent = formatCurrency(total);
+      document.getElementById('summary-labour').textContent = formatCurrency(labour);
+      document.getElementById('summary-materials').textContent = formatCurrency(materials);
+      document.getElementById('summary-profit').textContent = formatCurrency(profit);
+      document.getElementById('advanced-total').textContent = formatCurrency(total);
+    }
+
+    function removeAdvancedItem(index) {
+      advancedItems.splice(index, 1);
+      renderAdvancedTable();
+    }
+
+    document.getElementById('adv-save-draft').addEventListener('click', function() {
+      const projectName = document.getElementById('adv-project-name').value.trim() || 'Untitled estimate';
+      localStorage.setItem('ym-boq-draft', JSON.stringify({
+        projectName: projectName,
+        location: document.getElementById('adv-location').value.trim(),
+        client: document.getElementById('adv-client').value.trim(),
+        items: advancedItems
+      }));
+      alert('The BOQ draft was saved locally in this browser.');
+    });
+
+    document.getElementById('adv-clear').addEventListener('click', function() {
+      advancedItems.length = 0;
+      renderAdvancedTable();
+      document.getElementById('advanced-boq-form').reset();
+    });
+
+    function exportAdvancedBoQ() {
+      if (!advancedItems.length) {
+        alert('There are no BOQ items to export yet.');
+        return;
+      }
+
+      const rows = [['Ref', 'Description', 'Unit', 'Qty', 'Rate (Br)', 'Amount (Br)']];
+      advancedItems.forEach(function(item, index) {
+        rows.push([generateAdvancedRef(index), item.name, item.unit, item.qty, item.rate, item.amount]);
+      });
+
+      const csv = rows.map(function(r) { return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'advanced-boq-export.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function printAdvancedBoQ() {
+      window.print();
+    }
+
+    var savedDraft = localStorage.getItem('ym-boq-draft');
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        if (draft.items && draft.items.length) {
+          draft.items.forEach(function(item) { advancedItems.push(item); });
+          renderAdvancedTable();
+          if (draft.projectName) document.getElementById('adv-project-name').value = draft.projectName;
+          if (draft.location) document.getElementById('adv-location').value = draft.location;
+          if (draft.client) document.getElementById('adv-client').value = draft.client;
+        }
+      } catch (e) {
+        console.log('Draft load failed', e);
+      }
+    }
+
+    document.getElementById('mini-location').textContent = document.getElementById('adv-location').value;
+    renderAdvancedTable();
+  </script>
 </body>
 </html>
