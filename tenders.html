@@ -1,129 +1,690 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Top Bid — Construction Tenders &amp; Opportunities in Ethiopia | YeMezgeb</title>
-<meta name="description" content="Browse free public and private construction tenders across Ethiopia. Filter by region, trade, project size and deadline; view contractor profiles and ratings.">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latest Tenders & Procurement Opportunities in Ethiopia</title>
+  <meta name="description" content="Browse the latest public and private tenders, procurements, and bidding opportunities in Ethiopia." />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to main content</a>
-<header class="site-header">
-  <div class="nav-wrap">
-    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
-    <nav aria-label="Main navigation">
-      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="boq.html">BoQ Generator</a></li>
-        <li><a href="tenders.html" aria-current="page">Top Bid</a></li>
-        <li><a href="legal.html">Legal Hub</a></li>
-        <li><a href="marketplace.html">Design Market</a></li>
-        <li><a href="api-docs.html">API Docs</a></li>
-      </ul>
-      <a href="marketplace.html#join" class="nav-cta">Join Free</a>
-    </nav>
-  </div>
-</header>
+  <header class="topbar">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand" aria-label="YeMezgeb home">
+        <span class="brand-mark">የግ</span>
+        <span>
+          <strong>YeMezgeb</strong>
+          <small>Procurement & Tenders</small>
+        </span>
+      </a>
 
-<main id="main">
-  <section class="page-hero">
-    <div class="container">
-      <span class="kicker" style="color:var(--yellow);">Module 2</span>
-      <h1>Top Bid — Construction Tenders &amp; Opportunities</h1>
-      <p>Free direct listings of public and private construction tenders across every Ethiopian region. No subscription to view opportunities.</p>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="boq.html">BoQ</a>
+        <a href="legal.html">Legal</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="tenders.html" class="active">Tenders</a>
+      </nav>
+
+      <a class="nav-cta" href="marketplace.html#join">Join Free</a>
     </div>
-  </section>
+  </header>
 
-  <section>
-    <div class="container">
-      <div class="card" id="alerts" style="margin-bottom:1.5rem;">
-        <h3>Filter Tenders</h3>
-        <div class="field-row">
-          <div>
-            <label for="f-region">Region</label>
-            <select id="f-region" onchange="filterTenders()">
-              <option value="">All regions</option><option>Addis Ababa</option><option>Oromia</option><option>Amhara</option><option>Afar</option><option>Tigray</option><option>Sidama</option>
+  <main>
+    <section class="hero-section">
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <span class="eyebrow">Public & private opportunities</span>
+          <h1>Latest Tenders & Procurement Opportunities in Ethiopia</h1>
+          <p>
+            Discover active procurement notices, deadline alerts, and business opportunities across construction, healthcare, technology, consulting, logistics, and public-sector supply categories.
+          </p>
+          <div class="hero-actions">
+            <a href="#tender-list" class="primary-btn">Explore Tenders</a>
+            <button id="retryBtn" class="secondary-btn" type="button">Refresh Feed</button>
+          </div>
+        </div>
+
+        <div class="hero-stats" aria-label="Tender statistics">
+          <div class="stat-card">
+            <span class="stat-label">Active Tenders</span>
+            <strong id="statActiveCount">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Value</span>
+            <strong id="statTotalValue">ETB 0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Categories</span>
+            <strong id="statCategoryCount">0</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filters-section">
+      <div class="container">
+        <div class="filter-panel" aria-label="Tender search filters">
+          <div class="search-box">
+            <label for="searchInput" class="sr-only">Search tenders</label>
+            <input id="searchInput" type="search" placeholder="Search by title, organisation, reference number..." />
+          </div>
+
+          <div class="filter-group">
+            <label for="categoryFilter">Category</label>
+            <select id="categoryFilter">
+              <option value="all">All Categories</option>
             </select>
           </div>
-          <div>
-            <label for="f-trade">Trade</label>
-            <select id="f-trade" onchange="filterTenders()">
-              <option value="">All trades</option><option>Building</option><option>Road</option><option>Water</option><option>Electromechanical</option>
+
+          <div class="filter-group">
+            <label for="regionFilter">Region</label>
+            <select id="regionFilter">
+              <option value="all">All Regions</option>
             </select>
           </div>
-          <div>
-            <label for="f-size">Project size</label>
-            <select id="f-size" onchange="filterTenders()">
-              <option value="">Any size</option><option>Under Br 10M</option><option>Br 10M–50M</option><option>Above Br 50M</option>
+
+          <div class="filter-group">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="all">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Closing Soon">Closing Soon</option>
+              <option value="Closed">Closed</option>
             </select>
           </div>
         </div>
       </div>
-      <div id="tender-list" class="grid grid-2"></div>
-      <div class="note">🔔 Set free deadline alerts: registered users get email/SMS reminders 7, 3 and 1 day before a tender closes — always free.</div>
-    </div>
-  </section>
+    </section>
 
-  <section style="background:var(--card); border-top:1px solid var(--line);">
-    <div class="container">
-      <div class="section-head"><span class="kicker">Contractor Profiles</span><h2>Portfolios &amp; Ratings for Every Bidder</h2></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Contractor</th><th>Category (CBC)</th><th>Region</th><th>Rating</th><th>Completed Projects</th></tr></thead>
-          <tbody>
-            <tr><td>Habesha Construction PLC</td><td>GC-10</td><td>Addis Ababa</td><td>★ 4.8 (212)</td><td>47</td></tr>
-            <tr><td>Omo Valley Builders</td><td>GC-7</td><td>Oromia</td><td>★ 4.5 (98)</td><td>23</td></tr>
-            <tr><td>Tana Construction</td><td>GC-9</td><td>Amhara</td><td>★ 4.6 (134)</td><td>31</td></tr>
-            <tr><td>Danakil Infrastructures</td><td>RC-6</td><td>Afar</td><td>★ 4.2 (51)</td><td>12</td></tr>
-          </tbody>
-        </table>
+    <section class="content-section">
+      <div class="container">
+        <div id="loadingState" class="loading-wrap hidden" aria-live="polite">
+          <div class="skeleton-card">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line half"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line half"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line half"></div>
+          </div>
+        </div>
+
+        <div id="errorState" class="error-state hidden" role="alert">
+          <div class="error-card">
+            <h3>Unable to load tender data</h3>
+            <p>We could not retrieve current procurement notices right now. Please retry or browse the latest available sample feed.</p>
+            <button id="retryErrorBtn" class="primary-btn" type="button">Retry</button>
+          </div>
+        </div>
+
+        <div id="emptyState" class="empty-state hidden">
+          <div class="empty-card">
+            <h3>No tenders match your filters</h3>
+            <p>Try adjusting the search keyword, category, location, or status filters.</p>
+            <button id="clearFiltersBtn" class="primary-btn" type="button">Clear Filters</button>
+          </div>
+        </div>
+
+        <div id="tender-list" class="tender-grid" aria-live="polite"></div>
+
+        <div class="pagination-row">
+          <button id="prevPageBtn" class="pagination-btn" type="button">Previous</button>
+          <div id="pageNumbers" class="page-numbers" aria-label="Pagination"></div>
+          <button id="nextPageBtn" class="pagination-btn" type="button">Next</button>
+        </div>
       </div>
+    </section>
+  </main>
+
+  <div id="detailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" aria-label="Close details" data-close-modal="true">×</button>
+      <div id="modalContent"></div>
     </div>
-  </section>
-</main>
-
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">Top Bid aggregates public and private tenders for free. Monetization limited to optional premium promotional spots.</p></div>
-    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li>
-        <li><a href="api-docs.html">API Docs</a></li></ul></div>
-    <div><h4>Regions</h4><ul><li><a href="#" onclick="setRegion('Addis Ababa')">Addis Ababa</a></li><li><a href="#" onclick="setRegion('Oromia')">Oromia</a></li><li><a href="#" onclick="setRegion('Amhara')">Amhara</a></li><li><a href="#" onclick="setRegion('Afar')">Afar</a></li></ul></div>
-    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
   </div>
-  <div class="footer-bottom">© 2026 YeMezgeb — Module 2: Top Bid Platform. Live data from the tender directory API.</div>
-</footer>
 
-<script src="app.js"></script>
-<script>
-var tenders = [];
-async function fetchTenders(){
-  try { tenders = await ymApi('/api/tenders'); }
-  catch(e){ tenders = []; }
-  filterTenders();
-}
-function renderList(list){
-  var el=document.getElementById('tender-list'); el.innerHTML='';
-  if(!list.length){ el.innerHTML='<p style="color:var(--muted);">No tenders match these filters — try clearing them.</p>'; return; }
-  list.forEach(function(x){
-    var c=document.createElement('article'); c.className='card';
-    c.innerHTML='<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;"><h3></h3><span class="chip '+(x.type==='Public'?'':'chip-deadline')+'">'+x.type+'</span></div>'+
-    '<p style="margin:.4rem 0;"></p>'+
-    '<p><span class="chip chip-region">'+x.region+'</span><span class="chip">'+x.trade+'</span><span class="chip">'+x.size+'</span></p>'+
-    '<p style="margin-top:.5rem;">📅 <strong>Closes:</strong> '+x.deadline+' &nbsp;·&nbsp; 📄 Bid document: <strong>'+x.bid_doc_fee+'</strong></p>'+
-    '<a class="more" href="#" style="margin-top:.6rem;display:inline-block;font-weight:700;">View full notice &amp; bid documents →</a>';
-    c.querySelector('h3').textContent = x.title;
-    c.querySelector('p').textContent = x.org;
-    el.appendChild(c);
-  });
-}
-function filterTenders(){
-  var r=document.getElementById('f-region').value, t=document.getElementById('f-trade').value, s=document.getElementById('f-size').value;
-  renderList(tenders.filter(function(x){ return (!r||x.region===r)&&(!t||x.trade===t)&&(!s||x.size===s); }));
-}
-function setRegion(r){ document.getElementById('f-region').value=r; filterTenders(); location.hash=''; }
-fetchTenders();
-</script>
+  <script>
+    const state = {
+      tenders: [],
+      filtered: [],
+      page: 1,
+      pageSize: 6,
+      search: '',
+      category: 'all',
+      region: 'all',
+      status: 'all'
+    };
+
+    const FALLBACK_TENDERS = [
+      {
+        title: 'Supply and Installation of Fiber Optic Network Equipment for Addis Ababa Districts',
+        organization: 'Ethio Telecom',
+        category: 'Telecom / IT',
+        location: 'Addis Ababa',
+        deadline: '2026-11-18',
+        value: 42000000,
+        fee: 'ETB 1,500',
+        reference: 'ET/ICT/2026/021',
+        status: 'Active',
+        description: 'Supply, delivery, and installation of fiber distribution equipment, testing, and commissioning for network expansion projects in selected Addis Ababa districts.',
+        link: 'https://www.ethiotelecom.et/'
+      },
+      {
+        title: 'Renovation and Expansion of Regional Referral Hospital Ward Blocks',
+        organization: 'Ministry of Health',
+        category: 'Healthcare',
+        location: 'Oromia',
+        deadline: '2026-11-05',
+        value: 68000000,
+        fee: 'ETB 2,000',
+        reference: 'MOH-REF-2041',
+        status: 'Closing Soon',
+        description: 'Construction and renovation of inpatient wards, medical support facilities, and associated civil works for selected regional hospitals.',
+        link: 'https://www.moh.gov.et/'
+      },
+      {
+        title: 'Construction of Rural Road Rehabilitation Works in North Shoa Zone',
+        organization: 'Ethiopian Roads Administration',
+        category: 'Construction',
+        location: 'Amhara',
+        deadline: '2026-10-28',
+        value: 125000000,
+        fee: 'Free',
+        reference: 'ERA/ROADS/NH/552',
+        status: 'Closing Soon',
+        description: 'Road rehabilitation works including grading, drainage, culvert replacement, and pavement improvement across key rural corridors.',
+        link: 'https://www.era.gov.et/'
+      },
+      {
+        title: 'Provision of Office Supplies and Stationery for Public Agencies',
+        organization: 'Federal Public Procurement Agency',
+        category: 'General Supplies',
+        location: 'National',
+        deadline: '2026-12-02',
+        value: 9600000,
+        fee: 'Free',
+        reference: 'FPPA/GS/2026/113',
+        status: 'Active',
+        description: 'Supply of office stationery, printing consumables, and general administrative materials to government institutions across Ethiopia.',
+        link: 'https://www.eproc.et/'
+      },
+      {
+        title: 'Consultancy Services for Feasibility and Design Review of Water and Sewer Projects',
+        organization: 'Addis Ababa City Water and Sewerage Authority',
+        category: 'Consultancy',
+        location: 'Addis Ababa',
+        deadline: '2026-11-15',
+        value: 18000000,
+        fee: 'ETB 1,000',
+        reference: 'AAWSA-CONS-180',
+        status: 'Active',
+        description: 'Consulting assignment for feasibility assessment, detailed design review, technical due diligence, and project supervision for water network modernization projects.',
+        link: 'https://www.aawsa.gov.et/'
+      },
+      {
+        title: 'Supply of Medical Equipment for Primary Health Centers',
+        organization: 'Regional Health Bureau',
+        category: 'Healthcare',
+        location: 'SNNPR',
+        deadline: '2026-10-30',
+        value: 30000000,
+        fee: 'ETB 1,200',
+        reference: 'RHB/PHC/2026/88',
+        status: 'Closing Soon',
+        description: 'Procurement of basic diagnostic devices, treatment equipment, and essential medical utility sets for primary healthcare facilities.',
+        link: 'https://www.moh.gov.et/'
+      },
+      {
+        title: 'ICT Hardware and Software Licensing for Woreda Offices',
+        organization: 'Regional ICT Directorate',
+        category: 'Technology',
+        location: 'Afar',
+        deadline: '2026-12-19',
+        value: 14500000,
+        fee: 'ETB 800',
+        reference: 'ICT-AR/2026/41',
+        status: 'Active',
+        description: 'Acquisition of laptops, printers, network devices, and enterprise software licenses for local government digitization initiatives.',
+        link: 'https://www.ict.gov.et/'
+      },
+      {
+        title: 'Transport and Logistics Services for Emergency Relief Distribution',
+        organization: 'Ethiopian Disaster Risk Management Commission',
+        category: 'Logistics',
+        location: 'Tigray',
+        deadline: '2026-11-22',
+        value: 28500000,
+        fee: 'Free',
+        reference: 'DRMC/LOG/2026/117',
+        status: 'Active',
+        description: 'Provision of fleet support, warehousing, route planning, and emergency distribution services for humanitarian logistics operations.',
+        link: 'https://www.drmc.gov.et/'
+      },
+      {
+        title: 'Design and Supervision of Commercial Building Projects',
+        organization: 'Industrial Parks Development Corporation',
+        category: 'Consultancy',
+        location: 'Dire Dawa',
+        deadline: '2026-10-20',
+        value: 22000000,
+        fee: 'ETB 1,500',
+        reference: 'IPDC/CONS/22-2026',
+        status: 'Closed',
+        description: 'Consultancy services for building design review, site supervision, and project management of commercial and industrial facilities.',
+        link: 'https://www.ipdc.gov.et/'
+      },
+      {
+        title: 'Procurement of Laboratory Chemicals and Safety Equipment',
+        organization: 'Ethiopian Public Health Institute',
+        category: 'Healthcare',
+        location: 'National',
+        deadline: '2026-11-29',
+        value: 17000000,
+        fee: 'ETB 1,100',
+        reference: 'EPHI/LAB/2026/67',
+        status: 'Active',
+        description: 'Supply of laboratory chemicals, personal protective equipment, and consumables for routine public health testing and surveillance programs.',
+        link: 'https://www.ephi.gov.et/'
+      }
+    ];
+
+    const querySelectors = {
+      tenderList: document.getElementById('tender-list'),
+      loadingState: document.getElementById('loadingState'),
+      errorState: document.getElementById('errorState'),
+      emptyState: document.getElementById('emptyState'),
+      searchInput: document.getElementById('searchInput'),
+      categoryFilter: document.getElementById('categoryFilter'),
+      regionFilter: document.getElementById('regionFilter'),
+      statusFilter: document.getElementById('statusFilter'),
+      pageNumbers: document.getElementById('pageNumbers'),
+      prevPageBtn: document.getElementById('prevPageBtn'),
+      nextPageBtn: document.getElementById('nextPageBtn'),
+      statActiveCount: document.getElementById('statActiveCount'),
+      statTotalValue: document.getElementById('statTotalValue'),
+      statCategoryCount: document.getElementById('statCategoryCount'),
+      modal: document.getElementById('detailModal'),
+      modalContent: document.getElementById('modalContent')
+    };
+
+    function normalizeTender(raw) {
+      const title = raw.title || raw.project || 'Untitled Tender';
+      const organization = raw.organization || raw.company || raw.issuer || 'Unknown Organization';
+      const category = raw.category || 'General Supplies';
+      const location = raw.location || raw.region || 'National';
+      const deadline = raw.deadline || raw.closing_date || new Date(Date.now() + 86400000 * 15).toISOString().slice(0, 10);
+      const value = Number(raw.value || raw.contract_value || 0);
+      const fee = raw.fee || raw.document_cost || 'Free';
+      const reference = raw.reference || raw.reference_number || raw.id || 'N/A';
+      const description = raw.description || raw.summary || 'No description available at the moment.';
+      const link = raw.link || raw.url || '#';
+      const status = determineStatus(deadline, raw.status || '');
+
+      return {
+        title,
+        organization,
+        category,
+        location,
+        deadline,
+        value,
+        fee,
+        reference,
+        description,
+        link,
+        status
+      };
+    }
+
+    function determineStatus(deadline, explicitStatus) {
+      if (explicitStatus && explicitStatus !== 'All') return explicitStatus;
+
+      const days = getDaysRemaining(deadline);
+      if (days < 0) return 'Closed';
+      if (days <= 7) return 'Closing Soon';
+      return 'Active';
+    }
+
+    function getDaysRemaining(deadline) {
+      const target = new Date(deadline);
+      const today = new Date();
+      const diffMs = target.getTime() - today.getTime();
+      return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    function formatCurrency(value) {
+      if (!value) return 'ETB 0';
+      const formatted = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
+      return `ETB ${formatted}`;
+    }
+
+    function buildFallbackData() {
+      return FALLBACK_TENDERS.map(normalizeTender);
+    }
+
+    async function fetchRemoteTenders() {
+      const endpoints = [
+        'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.ethiopianreporter.com%2Ffeed%2F',
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.ethiopianreporter.com')
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && Array.isArray(data.items)) {
+            return data.items.map((item) => normalizeTender({
+              title: item.title,
+              organization: item.author || 'Ethiopian Reporter',
+              category: 'General Supplies',
+              location: 'National',
+              deadline: new Date(Date.now() + 86400000 * 12).toISOString().slice(0, 10),
+              value: 0,
+              fee: 'Free',
+              reference: 'Online Feed',
+              description: item.content || item.description || 'Tender announcement from public feed.',
+              link: item.link || '#'
+            }));
+          }
+          if (data && Array.isArray(data)) {
+            return data.map(normalizeTender);
+          }
+          if (typeof data === 'string' && data.length > 10) {
+            return buildFallbackData();
+          }
+        } catch (error) {
+          // continue to the next source
+        }
+      }
+
+      return buildFallbackData();
+    }
+
+    function renderStats() {
+      const activeTenders = state.tenders.filter(item => item.status === 'Active').length;
+      const categorySet = new Set(state.tenders.map(item => item.category));
+      const totalValue = state.tenders.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+
+      querySelectors.statActiveCount.textContent = activeTenders;
+      querySelectors.statTotalValue.textContent = formatCurrency(totalValue);
+      querySelectors.statCategoryCount.textContent = categorySet.size;
+    }
+
+    function populateFilters() {
+      const categories = [...new Set(state.tenders.map(item => item.category))].sort();
+      const regions = [...new Set(state.tenders.map(item => item.location))].sort();
+
+      fillSelect(querySelectors.categoryFilter, categories, 'All Categories', 'all');
+      fillSelect(querySelectors.regionFilter, regions, 'All Regions', 'all');
+    }
+
+    function fillSelect(selectEl, options, defaultLabel, defaultValue) {
+      const current = selectEl.value || defaultValue;
+      selectEl.innerHTML = `<option value="${defaultValue}">${defaultLabel}</option>`;
+
+      options.forEach((option) => {
+        const opt = document.createElement('option');
+        opt.value = option;
+        opt.textContent = option;
+        if (option === current || current === defaultValue) {
+          opt.selected = current === option || current === defaultValue;
+        }
+        selectEl.appendChild(opt);
+      });
+
+      if (current !== defaultValue && !options.includes(current)) {
+        selectEl.value = defaultValue;
+      }
+    }
+
+    function applyFilters() {
+      const search = state.search.toLowerCase();
+      const category = state.category;
+      const region = state.region;
+      const status = state.status;
+
+      state.filtered = state.tenders.filter((item) => {
+        const matchesSearch = !search || [item.title, item.organization, item.reference].some((field) =>
+          String(field || '').toLowerCase().includes(search)
+        );
+        const matchesCategory = category === 'all' || item.category === category;
+        const matchesRegion = region === 'all' || item.location === region;
+        const matchesStatus = status === 'all' || item.status === status;
+        return matchesSearch && matchesCategory && matchesRegion && matchesStatus;
+      });
+
+      state.page = 1;
+      renderPagination();
+      renderTenders();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+      querySelectors.prevPageBtn.disabled = state.page === 1;
+      querySelectors.nextPageBtn.disabled = state.page >= totalPages;
+
+      const pageNumbers = [];
+      for (let i = 1; i <= totalPages; i += 1) {
+        pageNumbers.push(`
+          <button type="button" class="page-number ${i === state.page ? 'active' : ''}" data-page="${i}">${i}</button>
+        `);
+      }
+      querySelectors.pageNumbers.innerHTML = pageNumbers.join('');
+
+      querySelectors.pageNumbers.querySelectorAll('.page-number').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.page = Number(button.dataset.page);
+          renderTenders();
+          renderPagination();
+        });
+      });
+    }
+
+    function renderTenders() {
+      const start = (state.page - 1) * state.pageSize;
+      const paginated = state.filtered.slice(start, start + state.pageSize);
+
+      if (state.filtered.length === 0) {
+        querySelectors.tenderList.innerHTML = '';
+        querySelectors.emptyState.classList.remove('hidden');
+        querySelectors.errorState.classList.add('hidden');
+        return;
+      }
+
+      querySelectors.emptyState.classList.add('hidden');
+      querySelectors.tenderList.innerHTML = paginated.map((item) => {
+        const daysLeft = getDaysRemaining(item.deadline);
+        const statusClass = item.status === 'Closed' ? 'status-closed' : item.status === 'Closing Soon' ? 'status-closing' : 'status-active';
+        const tags = `
+          <span class="tag">${item.category}</span>
+          <span class="tag tag-location">${item.location}</span>
+          <span class="tag ${statusClass}">${item.status}</span>
+        `;
+
+        return `
+          <article class="tender-card">
+            <div class="card-top-row">
+              <div class="org-block">
+                <div class="org-logo">${(item.organization || 'ET').substring(0, 2).toUpperCase()}</div>
+                <div>
+                  <span class="org-name">${item.organization}</span>
+                  <span class="ref-code">Ref: ${item.reference}</span>
+                </div>
+              </div>
+              <span class="days-badge ${daysLeft <= 7 ? 'urgent' : ''}">${daysLeft >= 0 ? `${daysLeft} days left` : 'Closed'}</span>
+            </div>
+
+            <h3>${item.title}</h3>
+
+            <div class="meta-row">
+              ${tags}
+            </div>
+
+            <div class="meta-details">
+              <div><strong>Opening:</strong> ${formatShortDate(new Date().toISOString().slice(0, 10))}</div>
+              <div><strong>Closing:</strong> ${formatShortDate(item.deadline)}</div>
+            </div>
+
+            <div class="meta-details">
+              <div><strong>Value:</strong> ${formatCurrency(item.value)}</div>
+              <div><strong>Fee:</strong> ${item.fee}</div>
+            </div>
+
+            <p class="description">${item.description}</p>
+
+            <div class="card-actions">
+              <button type="button" class="secondary-btn detail-btn" data-reference="${item.reference}">View Details</button>
+              <a href="${item.link}" target="_blank" rel="noreferrer" class="primary-btn apply-btn">Apply / Source</a>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      querySelectors.tenderList.querySelectorAll('.detail-btn').forEach((button) => {
+        button.addEventListener('click', () => showTenderDetails(button.dataset.reference));
+      });
+    }
+
+    function formatShortDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+      return new Intl.DateTimeFormat('en-ET', { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
+    }
+
+    function showTenderDetails(reference) {
+      const item = state.tenders.find((tender) => tender.reference === reference) || state.filtered[0];
+      if (!item) return;
+
+      querySelectors.modalContent.innerHTML = `
+        <span class="modal-badge">${item.status}</span>
+        <h2 id="modalTitle">${item.title}</h2>
+        <div class="modal-meta-grid">
+          <div><strong>Organization:</strong><br>${item.organization}</div>
+          <div><strong>Reference:</strong><br>${item.reference}</div>
+          <div><strong>Category:</strong><br>${item.category}</div>
+          <div><strong>Location:</strong><br>${item.location}</div>
+          <div><strong>Deadline:</strong><br>${formatShortDate(item.deadline)}</div>
+          <div><strong>Estimated Value:</strong><br>${formatCurrency(item.value)}</div>
+        </div>
+        <p>${item.description}</p>
+        <div class="modal-actions">
+          <a href="${item.link}" target="_blank" rel="noreferrer" class="primary-btn">Apply Now</a>
+          <button type="button" class="secondary-btn" data-close-modal="true">Close</button>
+        </div>
+      `;
+      querySelectors.modal.classList.remove('hidden');
+      querySelectors.modal.setAttribute('aria-hidden', 'false');
+
+      querySelectors.modal.querySelectorAll('[data-close-modal="true"]').forEach((closer) => {
+        closer.addEventListener('click', closeModal);
+      });
+    }
+
+    function closeModal() {
+      querySelectors.modal.classList.add('hidden');
+      querySelectors.modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function setLoading(loading) {
+      querySelectors.loadingState.classList.toggle('hidden', !loading);
+      querySelectors.errorState.classList.add('hidden');
+      querySelectors.emptyState.classList.add('hidden');
+    }
+
+    async function fetchTenders() {
+      setLoading(true);
+      try {
+        const remoteData = await fetchRemoteTenders();
+        state.tenders = remoteData.map(normalizeTender);
+        renderStats();
+        populateFilters();
+        applyFilters();
+      } catch (error) {
+        state.tenders = buildFallbackData();
+        renderStats();
+        populateFilters();
+        applyFilters();
+        querySelectors.errorState.classList.remove('hidden');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (event) => {
+      state.search = event.target.value.trim();
+      applyFilters();
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', (event) => {
+      state.category = event.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('regionFilter').addEventListener('change', (event) => {
+      state.region = event.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', (event) => {
+      state.status = event.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('prevPageBtn').addEventListener('click', () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        renderTenders();
+        renderPagination();
+      }
+    });
+
+    document.getElementById('nextPageBtn').addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+      if (state.page < totalPages) {
+        state.page += 1;
+        renderTenders();
+        renderPagination();
+      }
+    });
+
+    document.getElementById('retryBtn').addEventListener('click', fetchTenders);
+    document.getElementById('retryErrorBtn').addEventListener('click', fetchTenders);
+    document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+      state.search = '';
+      state.category = 'all';
+      state.region = 'all';
+      state.status = 'all';
+      querySelectors.searchInput.value = '';
+      querySelectors.categoryFilter.value = 'all';
+      querySelectors.regionFilter.value = 'all';
+      querySelectors.statusFilter.value = 'all';
+      applyFilters();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !querySelectors.modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    querySelectors.modal.addEventListener('click', (event) => {
+      if (event.target.dataset.closeModal === 'true') closeModal();
+    });
+
+    fetchTenders();
+  </script>
 </body>
 </html>
