@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2P Design &amp; Blueprint Marketplace | YeMezgeb</title>
+<meta name="description" content="Buy and sell verified architectural blueprints, structural drawings, MEP designs and 3D models in Ethiopia. Telebirr & CBE Birr payments with secure escrow release.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
+    <nav aria-label="Main navigation">
+      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="boq.html">BoQ Generator</a></li>
+        <li><a href="tenders.html">Top Bid</a></li>
+        <li><a href="legal.html">Legal Hub</a></li>
+        <li><a href="marketplace.html" aria-current="page">Design Market</a></li>
+      </ul>
+      <a href="#join" class="nav-cta">Join Free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="kicker" style="color:var(--yellow);">Module 4</span>
+      <h1>P2P Design &amp; Blueprint Marketplace</h1>
+      <p>Verified engineers and architects list blueprints, structural drawings, MEP designs and 3D models. Clients preview watermarked plans and pay safely through escrow.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h3>Search Designs</h3>
+        <div class="field-row">
+          <div><label for="s-plot">Plot size</label><select id="s-plot" onchange="fetchListings()"><option value="">Any</option><option>100–200 m²</option><option>200–400 m²</option><option>400+ m²</option></select></div>
+          <div><label for="s-budget">Budget</label><select id="s-budget" onchange="fetchListings()"><option value="">Any</option><option>Under Br 5,000</option><option>Br 5,000–15,000</option><option>Br 15,000+</option></select></div>
+          <div><label for="s-rooms">Rooms</label><select id="s-rooms" onchange="fetchListings()"><option value="">Any</option><option>2</option><option>3</option><option>4</option></select></div>
+          <div><label for="s-style">Style</label><select id="s-style" onchange="fetchListings()"><option value="">Any</option><option>Modern</option><option>Villa</option><option>Commercial</option></select></div>
+        </div>
+      </div>
+      <div id="listing-grid" class="grid grid-3" style="margin-bottom:2rem;"></div>
+    </div>
+  </section>
+
+  <section style="background:var(--card); border-top:1px solid var(--line);">
+    <div class="container">
+      <div class="section-head"><span class="kicker">Secure Payments</span><h2>Escrow-Protected, Paid the Ethiopian Way</h2></div>
+      <div class="grid grid-4">
+        <div class="step"><h3>1 · Choose a Design</h3><p>Browse verified storefronts and preview the watermarked plan.</p></div>
+        <div class="step"><h3>2 · Pay to Escrow</h3><p>Funds are held safely — Telebirr, CBE Birr, bank transfer, Chapa or Santim Pay.</p></div>
+        <div class="step"><h3>3 · Files Transferred</h3><p>The engineer uploads the full drawing set, verified for completeness.</p></div>
+        <div class="step"><h3>4 · Escrow Released</h3><p>Payment is released to the professional only after you receive the files.</p></div>
+      </div>
+      <div class="pay-badges" style="justify-content:center; margin-top:1rem;"><span>Telebirr</span><span>CBE Birr</span><span>Chapa</span><span>Santim Pay</span><span>Bank Transfer</span></div>
+    </div>
+  </section>
+
+  <section id="join">
+    <div class="container grid grid-2">
+      <div class="card">
+        <h3>👤 I'm a Client — Join Free</h3>
+        <p style="margin-bottom:.5rem;">Access the BoQ generator, tenders, legal hub and marketplace at zero cost.</p>
+        <label for="c-name">Full name</label><input id="c-name" type="text" placeholder="Your name">
+        <label for="c-email">Email</label><input id="c-email" type="email" placeholder="you@example.com">
+        <label for="c-pass">Password (min. 8 characters)</label><input id="c-pass" type="password">
+        <button class="btn btn-primary" style="margin-top:1rem;" onclick="registerUser('client')">Create Free Client Account</button>
+      </div>
+      <div class="card">
+        <h3>🏛️ I'm an Engineer / Architect — Open a Storefront</h3>
+        <p style="margin-bottom:.5rem;">Sell your designs after one-time credential verification (license ID + registry check).</p>
+        <label for="p-name">Full name</label><input id="p-name" type="text" placeholder="Your name">
+        <label for="p-email">Email</label><input id="p-email" type="email" placeholder="you@firm.com">
+        <label for="p-pass">Password (min. 8 characters)</label><input id="p-pass" type="password">
+        <label for="p-license">Professional license No.</label><input id="p-license" type="text" placeholder="e.g. ERA-AC-2019-04512">
+        <button class="btn btn-yellow" style="margin-top:1rem;" onclick="registerUser('engineer')">Apply for Verified Storefront</button>
+        <p style="font-size:.8rem; color:var(--muted); margin-top:.5rem;">Verification protects buyers and keeps the marketplace professional.</p>
+      </div>
+      <div class="card grid-2" style="grid-column:1/-1;">
+        <h3>🔐 Already registered? Log in</h3>
+        <div class="field-row">
+          <div><label for="l-email">Email</label><input id="l-email" type="email" placeholder="demo: sara@example.com"></div>
+          <div><label for="l-pass">Password</label><input id="l-pass" type="password" placeholder="demo: Demo1234!"></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:.8rem;" onclick="loginUser()">Log In</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">A peer-to-peer marketplace where Ethiopia's verified design professionals sell directly to builders. Low transaction fees only — browsing is free.</p></div>
+    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html">API Docs</a></li></ul></div>
+    <div><h4>Trust &amp; Safety</h4><ul><li>Credential verification</li><li>Escrow protection</li><li>Watermarked previews</li><li>Role-based access control</li></ul></div>
+    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2026 YeMezgeb — Module 4: P2P Design &amp; Blueprint Marketplace. Live data from the marketplace API.</div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var IMG = 'https://sspark.genspark.ai/i/pkByOsnBTE4Y8cnA?width=2560';
+async function fetchListings(){
+  var plot=document.getElementById('s-plot').value, budget=document.getElementById('s-budget').value,
+      rooms=document.getElementById('s-rooms').value, style=document.getElementById('s-style').value;
+  var qs = new URLSearchParams();
+  if(plot) qs.set('plot', plot); if(budget) qs.set('budget', budget);
+  if(rooms) qs.set('rooms', rooms); if(style) qs.set('style', style);
+  var grid = document.getElementById('listing-grid');
+  try {
+    var list = await ymApi('/api/listings' + (qs.toString() ? '?' + qs : ''));
+    grid.innerHTML = '';
+    if(!list.length){ grid.innerHTML = '<p style="color:var(--muted);">No designs match these filters — try clearing them.</p>'; return; }
+    list.forEach(function(l){
+      var c = document.createElement('article'); c.className = 'card img-card';
+      var star = l.rating ? '★ ' + l.rating : '';
+      c.innerHTML = '<img src="'+IMG+'" alt="Floor plan preview (watermarked in production)">'+
+        '<div class="body"><h3></h3><p></p>'+
+        '<p style="margin:.5rem 0;"><span class="chip">'+(l.style||'—')+'</span><span class="chip">'+(l.file_types||'PDF')+'</span>'+(l.verified?'<span class="chip">✔ Verified</span>':'')+'</p>'+
+        '<p style="font-weight:800; color:var(--green-dark); margin:.5rem 0;">Br '+Number(l.price).toLocaleString()+'</p>'+
+        '<p style="font-size:.85rem;">by <strong></strong>'+(star?' '+star:'')+'</p>'+
+        '<button class="btn btn-primary" style="margin-top:.6rem;">Buy with Escrow</button></div>';
+      c.querySelector('h3').textContent = l.title;
+      c.querySelector('p').textContent = l.description;
+      c.querySelector('strong').textContent = l.designer_name;
+      c.querySelector('button').onclick = function(){ buyDesign(l.id, l.title, l.price); };
+      grid.appendChild(c);
+    });
+  } catch(e){
+    grid.innerHTML = '<p style="color:var(--muted);">Could not reach the API — start the server with <code>npm start</code>.</p>';
+  }
+}
+async function buyDesign(id, title, price){
+  if (!YM.token) { alert('Log in or create a free account first, then purchase with escrow protection.'); location.hash = '#join'; return; }
+  var method = prompt('Escrow checkout — "'+title+'" at Br '+Number(price).toLocaleString()+'\nPayment method (Telebirr / CBE Birr / Chapa / Santim Pay / Bank Transfer):', 'Telebirr');
+  if (!method) return;
+  try {
+    var d = await ymApi('/api/orders', { method:'POST', body:{ listing_id: id, method: method } });
+    alert(d.message);
+  } catch(e){ alert('Order failed: ' + e.message); }
+}
+async function registerUser(role){
+  var prefix = role === 'engineer' ? 'p-' : 'c-';
+  var payload = {
+    name: document.getElementById(prefix+'name').value.trim(),
+    email: document.getElementById(prefix+'email').value.trim(),
+    password: document.getElementById(prefix+'pass').value,
+    role: role
+  };
+  if (role === 'engineer') payload.license_no = document.getElementById('p-license').value.trim();
+  try {
+    var u = await ymRegister(payload);
+    alert('Welcome, ' + u.name + '! Account created as "' + u.role + '"' + (u.role==='engineer' ? ' — an admin will verify your credentials before your storefront goes live.' : '.'));
+  } catch(e){ alert('Registration failed: ' + e.message); }
+}
+async function loginUser(){
+  try {
+    var u = await ymLogin(document.getElementById('l-email').value.trim(), document.getElementById('l-pass').value);
+    alert('Logged in as ' + u.name + ' (' + u.role + ')');
+  } catch(e){ alert('Login failed: ' + e.message); }
+}
+fetchListings();
+</script>
+</body>
+</html>

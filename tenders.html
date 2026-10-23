@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Bid — Construction Tenders &amp; Opportunities in Ethiopia | YeMezgeb</title>
+<meta name="description" content="Browse free public and private construction tenders across Ethiopia. Filter by region, trade, project size and deadline; view contractor profiles and ratings.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
+    <nav aria-label="Main navigation">
+      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="boq.html">BoQ Generator</a></li>
+        <li><a href="tenders.html" aria-current="page">Top Bid</a></li>
+        <li><a href="legal.html">Legal Hub</a></li>
+        <li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html">API Docs</a></li>
+      </ul>
+      <a href="marketplace.html#join" class="nav-cta">Join Free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="kicker" style="color:var(--yellow);">Module 2</span>
+      <h1>Top Bid — Construction Tenders &amp; Opportunities</h1>
+      <p>Free direct listings of public and private construction tenders across every Ethiopian region. No subscription to view opportunities.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card" id="alerts" style="margin-bottom:1.5rem;">
+        <h3>Filter Tenders</h3>
+        <div class="field-row">
+          <div>
+            <label for="f-region">Region</label>
+            <select id="f-region" onchange="filterTenders()">
+              <option value="">All regions</option><option>Addis Ababa</option><option>Oromia</option><option>Amhara</option><option>Afar</option><option>Tigray</option><option>Sidama</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-trade">Trade</label>
+            <select id="f-trade" onchange="filterTenders()">
+              <option value="">All trades</option><option>Building</option><option>Road</option><option>Water</option><option>Electromechanical</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-size">Project size</label>
+            <select id="f-size" onchange="filterTenders()">
+              <option value="">Any size</option><option>Under Br 10M</option><option>Br 10M–50M</option><option>Above Br 50M</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="tender-list" class="grid grid-2"></div>
+      <div class="note">🔔 Set free deadline alerts: registered users get email/SMS reminders 7, 3 and 1 day before a tender closes — always free.</div>
+    </div>
+  </section>
+
+  <section style="background:var(--card); border-top:1px solid var(--line);">
+    <div class="container">
+      <div class="section-head"><span class="kicker">Contractor Profiles</span><h2>Portfolios &amp; Ratings for Every Bidder</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Contractor</th><th>Category (CBC)</th><th>Region</th><th>Rating</th><th>Completed Projects</th></tr></thead>
+          <tbody>
+            <tr><td>Habesha Construction PLC</td><td>GC-10</td><td>Addis Ababa</td><td>★ 4.8 (212)</td><td>47</td></tr>
+            <tr><td>Omo Valley Builders</td><td>GC-7</td><td>Oromia</td><td>★ 4.5 (98)</td><td>23</td></tr>
+            <tr><td>Tana Construction</td><td>GC-9</td><td>Amhara</td><td>★ 4.6 (134)</td><td>31</td></tr>
+            <tr><td>Danakil Infrastructures</td><td>RC-6</td><td>Afar</td><td>★ 4.2 (51)</td><td>12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">Top Bid aggregates public and private tenders for free. Monetization limited to optional premium promotional spots.</p></div>
+    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html">API Docs</a></li></ul></div>
+    <div><h4>Regions</h4><ul><li><a href="#" onclick="setRegion('Addis Ababa')">Addis Ababa</a></li><li><a href="#" onclick="setRegion('Oromia')">Oromia</a></li><li><a href="#" onclick="setRegion('Amhara')">Amhara</a></li><li><a href="#" onclick="setRegion('Afar')">Afar</a></li></ul></div>
+    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2026 YeMezgeb — Module 2: Top Bid Platform. Live data from the tender directory API.</div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var tenders = [];
+async function fetchTenders(){
+  try { tenders = await ymApi('/api/tenders'); }
+  catch(e){ tenders = []; }
+  filterTenders();
+}
+function renderList(list){
+  var el=document.getElementById('tender-list'); el.innerHTML='';
+  if(!list.length){ el.innerHTML='<p style="color:var(--muted);">No tenders match these filters — try clearing them.</p>'; return; }
+  list.forEach(function(x){
+    var c=document.createElement('article'); c.className='card';
+    c.innerHTML='<div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;"><h3></h3><span class="chip '+(x.type==='Public'?'':'chip-deadline')+'">'+x.type+'</span></div>'+
+    '<p style="margin:.4rem 0;"></p>'+
+    '<p><span class="chip chip-region">'+x.region+'</span><span class="chip">'+x.trade+'</span><span class="chip">'+x.size+'</span></p>'+
+    '<p style="margin-top:.5rem;">📅 <strong>Closes:</strong> '+x.deadline+' &nbsp;·&nbsp; 📄 Bid document: <strong>'+x.bid_doc_fee+'</strong></p>'+
+    '<a class="more" href="#" style="margin-top:.6rem;display:inline-block;font-weight:700;">View full notice &amp; bid documents →</a>';
+    c.querySelector('h3').textContent = x.title;
+    c.querySelector('p').textContent = x.org;
+    el.appendChild(c);
+  });
+}
+function filterTenders(){
+  var r=document.getElementById('f-region').value, t=document.getElementById('f-trade').value, s=document.getElementById('f-size').value;
+  renderList(tenders.filter(function(x){ return (!r||x.region===r)&&(!t||x.trade===t)&&(!s||x.size===s); }));
+}
+function setRegion(r){ document.getElementById('f-region').value=r; filterTenders(); location.hash=''; }
+fetchTenders();
+</script>
+</body>
+</html>

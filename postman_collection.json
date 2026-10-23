@@ -1,0 +1,246 @@
+{
+  "info": {
+    "name": "YeMezgeb API",
+    "description": "Free Ethiopian Construction, Bidding & Blueprint Marketplace — all 20 endpoints. Set the collection variable baseUrl (default http://localhost:3000) and accessToken after logging in.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "projectId", "value": "1" },
+    { "key": "itemId", "value": "1" },
+    { "key": "listingId", "value": "1" },
+    { "key": "orderId", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sara Bekele\",\n  \"email\": \"sara@example.com\",\n  \"password\": \"Demo1234!\",\n  \"role\": \"client\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "description": "Roles: client / engineer / contractor. Engineers also send license_no. Returns token + user (201)."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.token) { pm.collectionVariables.set('accessToken', d.token); }",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"sara@example.com\",\n  \"password\": \"Demo1234!\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "description": "Demo logins (password Demo1234!): admin@yemezgeb.et, dawit@yemezgeb.et (engineer), habesha@yemezgeb.et (contractor), sara@example.com (client). Test script auto-saves the token to the collection variable."
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "BoQ Generator",
+      "item": [
+        {
+          "name": "List my projects",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/boq/projects", "host": ["{{baseUrl}}"], "path": ["api", "boq", "projects"] } }
+        },
+        {
+          "name": "Create project",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"G+1 Residence — Bole, Addis Ababa\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/boq/projects", "host": ["{{baseUrl}}"], "path": ["api", "boq", "projects"] }
+          }
+        },
+        {
+          "name": "Get project items",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/boq/projects/{{projectId}}/items", "host": ["{{baseUrl}}"], "path": ["api", "boq", "projects", "{{projectId}}", "items"] }
+          }
+        },
+        {
+          "name": "Add line item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"trade\": \"2 — Substructure & Foundations\",\n  \"description\": \"C-25 reinforced concrete footing\",\n  \"unit\": \"m³\",\n  \"qty\": 18.5,\n  \"rate\": 14300\n}" },
+            "url": { "raw": "{{baseUrl}}/api/boq/projects/{{projectId}}/items", "host": ["{{baseUrl}}"], "path": ["api", "boq", "projects", "{{projectId}}", "items"] }
+          }
+        },
+        {
+          "name": "Delete line item",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/boq/items/{{itemId}}", "host": ["{{baseUrl}}"], "path": ["api", "boq", "items", "{{itemId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenders (Top Bid)",
+      "item": [
+        {
+          "name": "List tenders (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/tenders?region=&trade=&size=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tenders"],
+              "query": [
+                { "key": "region", "value": "", "description": "e.g. Addis Ababa, Oromia, Amhara, Afar" },
+                { "key": "trade", "value": "", "description": "e.g. Building, Road, Water, Electromechanical" },
+                { "key": "size", "value": "", "description": "e.g. Under Br 10M | Br 10M–50M | Above Br 50M" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get one tender (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/tenders/1", "host": ["{{baseUrl}}"], "path": ["api", "tenders", "1"] }
+          }
+        },
+        {
+          "name": "Publish tender (admin/contractor)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Construction of Rural Health Post\",\n  \"org\": \"SNNPR Health Bureau\",\n  \"region\": \"Sidama\",\n  \"trade\": \"Building\",\n  \"size\": \"Br 10M–50M\",\n  \"deadline\": \"2026-12-15\",\n  \"type\": \"Public\",\n  \"bid_doc_fee\": \"Br 300,000\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/tenders", "host": ["{{baseUrl}}"], "path": ["api", "tenders"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Legal Repository",
+      "item": [
+        {
+          "name": "Search documents (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/legal?q=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "legal"],
+              "query": [{ "key": "q", "value": "", "description": "Amharic or English keyword, e.g. seismic / ሕነት" }]
+            }
+          }
+        },
+        {
+          "name": "Get one document (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/legal/1", "host": ["{{baseUrl}}"], "path": ["api", "legal", "1"] }
+          }
+        },
+        {
+          "name": "Add document (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"New Construction Directive\",\n  \"title_am\": \"አዲስ መመሪያ\",\n  \"category\": \"Municipal Permit\",\n  \"language\": \"አማርኛ / EN\",\n  \"source\": \"Negarit Gazeta\",\n  \"summary_en\": \"Summary in English.\",\n  \"summary_am\": \"ማጠቃለያ በአማርኛ።\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/legal", "host": ["{{baseUrl}}"], "path": ["api", "legal"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Marketplace & Escrow",
+      "item": [
+        {
+          "name": "List designs (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/listings?plot=&budget=&rooms=&style=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "listings"],
+              "query": [
+                { "key": "plot", "value": "", "description": "e.g. 100–200 m²" },
+                { "key": "budget", "value": "", "description": "Under Br 5,000 | Br 5,000–15,000 | Br 15,000+" },
+                { "key": "rooms", "value": "", "description": "Minimum rooms" },
+                { "key": "style", "value": "", "description": "e.g. Modern, Villa, Commercial" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create listing (verified engineer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Duplex Plan\",\n  \"description\": \"4 bedrooms, full structural + MEP set.\",\n  \"price\": 12000,\n  \"plot_size\": \"200–400 m²\",\n  \"rooms\": 4,\n  \"style\": \"Modern\",\n  \"file_types\": \"DWG + PDF\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/listings", "host": ["{{baseUrl}}"], "path": ["api", "listings"] }
+          }
+        },
+        {
+          "name": "Buy design → escrow (client/contractor)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"listing_id\": 1,\n  \"method\": \"Telebirr\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] },
+            "description": "Payment methods: Telebirr, CBE Birr, Chapa, Santim Pay, Bank Transfer. Status becomes escrow_held."
+          }
+        },
+        {
+          "name": "Mark files delivered (seller engineer)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/deliver", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{orderId}}", "deliver"] }
+          }
+        },
+        {
+          "name": "Release escrow (buyer)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/release", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{orderId}}", "release"] }
+          }
+        },
+        {
+          "name": "My orders",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/mine", "host": ["{{baseUrl}}"], "path": ["api", "orders", "mine"] }
+          }
+        }
+      ]
+    }
+  ]
+}

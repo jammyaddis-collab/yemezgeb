@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Documentation — YeMezgeb REST API</title>
+<meta name="description" content="Complete REST API reference for the YeMezgeb platform: authentication, BoQ, tenders, legal repository and marketplace escrow endpoints with curl examples.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.docs-layout { display: grid; gap: 1.5rem; }
+@media (min-width: 980px) { .docs-layout { grid-template-columns: 260px 1fr; align-items: start; } }
+.docs-sidebar { position: sticky; top: 76px; }
+.docs-sidebar a { display: block; padding: .35rem .6rem; text-decoration: none; color: var(--muted); font-size: .88rem; border-left: 3px solid transparent; }
+.docs-sidebar a:hover { color: var(--green-dark); border-left-color: var(--yellow); background: #eef4ee; }
+.docs-sidebar .group { margin-top: 1rem; font-weight: 800; color: var(--green-dark); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; padding: .35rem .6rem 0; }
+.method { display: inline-block; font-weight: 900; font-size: .72rem; padding: .2rem .55rem; border-radius: 6px; margin-right: .5rem; vertical-align: middle; }
+.m-get { background: #e3f0e7; color: var(--green-dark); }
+.m-post { background: #fdf1d7; color: #7a5a00; }
+.m-delete { background: #fde3e0; color: var(--red); }
+.ep { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1.4rem; scroll-margin-top: 80px; }
+.ep h3 { color: var(--green-dark); margin-bottom: .3rem; word-break: break-all; }
+.ep .path { font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: .95rem; }
+.auth-tag { display: inline-block; font-size: .72rem; font-weight: 800; padding: .15rem .55rem; border-radius: 999px; background: #eef4ee; color: var(--green-dark); margin-left: .4rem; vertical-align: middle; }
+.auth-tag.admin { background: #fde3e0; color: var(--red); }
+pre { background: #10161f; color: #d7e2ee; padding: .9rem 1rem; border-radius: 8px; overflow-x: auto; font-size: .8rem; line-height: 1.5; margin: .6rem 0; }
+pre .c { color: #7ec699; }
+code { font-family: ui-monospace, Consolas, monospace; background: #eef1ee; padding: .1rem .35rem; border-radius: 5px; font-size: .85em; }
+.ep code { background: #f2f5f2; }
+.ep table { min-width: 0; font-size: .84rem; margin: .6rem 0; }
+.pill-row { display: flex; gap: .5rem; flex-wrap: wrap; margin: .6rem 0; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
+    <nav aria-label="Main navigation">
+      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="boq.html">BoQ Generator</a></li>
+        <li><a href="tenders.html">Top Bid</a></li>
+        <li><a href="legal.html">Legal Hub</a></li>
+        <li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html" aria-current="page">API Docs</a></li>
+      </ul>
+      <a href="marketplace.html#join" class="nav-cta">Join Free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="kicker" style="color:var(--yellow);">Developers</span>
+      <h1>YeMezgeb REST API Reference</h1>
+      <p>20 endpoints across 5 modules. Base URL: <code style="background:rgba(255,255,255,.15);">http://localhost:3000</code> (or your deployed domain). JSON in, JSON out.</p>
+      <div class="pill-row">
+        <span class="auth-tag" style="margin:0;">🔑 JWT = send header <code style="background:rgba(255,255,255,.15);">Authorization: Bearer &lt;token&gt;</code></span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container docs-layout">
+      <aside class="docs-sidebar" aria-label="Endpoint list">
+        <div class="group">Getting started</div>
+        <a href="#auth">Authentication</a>
+        <a href="#errors">Errors &amp; status codes</a>
+        <div class="group">Auth (3)</div>
+        <a href="#register">POST /api/auth/register</a>
+        <a href="#login">POST /api/auth/login</a>
+        <a href="#me">GET /api/auth/me</a>
+        <div class="group">BoQ (5)</div>
+        <a href="#boq-list">GET /api/boq/projects</a>
+        <a href="#boq-create">POST /api/boq/projects</a>
+        <a href="#boq-items">GET …/projects/:id/items</a>
+        <a href="#boq-additem">POST …/projects/:id/items</a>
+        <a href="#boq-delitem">DELETE /api/boq/items/:id</a>
+        <div class="group">Tenders (3)</div>
+        <a href="#tenders-list">GET /api/tenders</a>
+        <a href="#tenders-one">GET /api/tenders/:id</a>
+        <a href="#tenders-create">POST /api/tenders</a>
+        <div class="group">Legal (3)</div>
+        <a href="#legal-list">GET /api/legal</a>
+        <a href="#legal-one">GET /api/legal/:id</a>
+        <a href="#legal-create">POST /api/legal</a>
+        <div class="group">Marketplace (6)</div>
+        <a href="#listings-list">GET /api/listings</a>
+        <a href="#listings-create">POST /api/listings</a>
+        <a href="#orders-create">POST /api/orders</a>
+        <a href="#orders-deliver">POST /api/orders/:id/deliver</a>
+        <a href="#orders-release">POST /api/orders/:id/release</a>
+        <a href="#orders-mine">GET /api/orders/mine</a>
+      </aside>
+
+      <div>
+        <div class="ep" id="auth">
+          <h3>Authentication</h3>
+          <p style="color:var(--muted); font-size:.93rem;">Register returns a JWT immediately. Send it as <code>Authorization: Bearer &lt;token&gt;</code> on every protected call. Tokens expire after 7 days. Roles: <code>client</code>, <code>engineer</code>, <code>contractor</code>, <code>admin</code>. Engineer storefronts stay inactive until an admin sets <code>verified=1</code>.</p>
+          <pre><span class="c"># Login once, reuse the token everywhere</span>
+TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"sara@example.com","password":"Demo1234!"}' | python3 -c "import json,sys;print(json.load(sys.stdin)['token'])")</pre>
+        </div>
+
+        <div class="ep" id="errors">
+          <h3>Errors &amp; status codes</h3>
+          <div class="table-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Meaning</th><th>Example body</th></tr></thead>
+            <tbody>
+              <tr><td>400</td><td>Validation failed</td><td><code>{"error":"deadline must be YYYY-MM-DD"}</code></td></tr>
+              <tr><td>401</td><td>Missing / invalid token</td><td><code>{"error":"Login required"}</code></td></tr>
+              <tr><td>403</td><td>Role not allowed, or unverified engineer</td><td><code>{"error":"Forbidden for role: client"}</code></td></tr>
+              <tr><td>404</td><td>Resource not found (or not yours)</td><td><code>{"error":"Project not found"}</code></td></tr>
+              <tr><td>409</td><td>Email already registered</td><td><code>{"error":"Email already registered"}</code></td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p style="color:var(--muted); font-size:.88rem;">All errors share the shape <code>{"error": "…"}</code>. Unknown API paths return 404 with the same shape; unknown pages return the homepage.</p>
+        </div>
+
+        <div class="ep" id="register">
+          <h3><span class="method m-post">POST</span><span class="path">/api/auth/register</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Create an account. Fields: <code>name</code>, <code>email</code>, <code>password</code> (≥8 chars), <code>role</code> (<code>client</code> default, <code>engineer</code>, <code>contractor</code>), <code>license_no</code> (required for engineers).</p>
+          <pre><span class="c"># Request</span>
+curl -s -X POST http://localhost:3000/api/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Sara Bekele","email":"sara@example.com","password":"Demo1234!","role":"client"}'
+
+<span class="c"># Response 201</span>
+{ "token": "eyJhbGciOiJIUzI1NiIs…", "user": { "id": 4, "name": "Sara Bekele", "role": "client", "verified": 1 } }</pre>
+        </div>
+
+        <div class="ep" id="login">
+          <h3><span class="method m-post">POST</span><span class="path">/api/auth/login</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Exchange email + password for a JWT. Returns <code>user</code> with <code>id</code>, <code>name</code>, <code>role</code>, <code>verified</code>.</p>
+          <pre><span class="c"># Response 200 (wrong credentials → 401 {"error":"Wrong email or password"})</span>
+{ "token": "eyJhbGciOiJIUzI1NiIs…", "user": { "id": 2, "name": "Ato Dawit Kassa", "role": "engineer", "verified": 1 } }</pre>
+        </div>
+
+        <div class="ep" id="me">
+          <h3><span class="method m-get">GET</span><span class="path">/api/auth/me</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Current user profile: <code>id, name, email, role, verified, license_no</code>.</p>
+          <pre>curl -s http://localhost:3000/api/auth/me -H "Authorization: Bearer $TOKEN"</pre>
+        </div>
+
+        <div class="ep" id="boq-list">
+          <h3><span class="method m-get">GET</span><span class="path">/api/boq/projects</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">List the logged-in user's BoQ projects, newest first. Each: <code>id, user_id, name, currency ("ETB"), created_at</code>.</p>
+          <pre><span class="c"># Response 200</span>
+[ { "id": 1, "user_id": 4, "name": "G+1 Residence — Bole, Addis Ababa", "currency": "ETB", "created_at": "2026-10-21 14:51:08" } ]</pre>
+        </div>
+
+        <div class="ep" id="boq-create">
+          <h3><span class="method m-post">POST</span><span class="path">/api/boq/projects</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Create a project. Body: <code>{ "name": "…" }</code> (required).</p>
+          <pre>curl -s -X POST http://localhost:3000/api/boq/projects \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"name":"Curl Test Villa"}'
+
+<span class="c"># Response 201</span>
+{ "id": 2, "user_id": 4, "name": "Curl Test Villa", "currency": "ETB", "created_at": "2026-10-21 14:51:19" }</pre>
+        </div>
+
+        <div class="ep" id="boq-items">
+          <h3><span class="method m-get">GET</span><span class="path">/api/boq/projects/:id/items</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Project + all line items (owner only — other users' projects return 404). Item fields: <code>trade, description, unit, qty, rate</code>.</p>
+          <pre><span class="c"># Response 200</span>
+{ "project": { "id": 2, "name": "Curl Test Villa", "currency": "ETB", "created_at": "…" },
+  "items": [ { "id": 6, "project_id": 2, "trade": "2 — Substructure", "description": "Test footing", "unit": "m³", "qty": 10, "rate": 1000 } ] }</pre>
+        </div>
+
+        <div class="ep" id="boq-additem">
+          <h3><span class="method m-post">POST</span><span class="path">/api/boq/projects/:id/items</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Add a line item. Body: <code>trade</code>*, <code>description</code>*, <code>unit</code> (default <code>No.</code>), <code>qty</code>*, <code>rate</code>* — numbers ≥ 0.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/boq/projects/2/items \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"trade":"2 — Substructure","description":"Test footing","unit":"m³","qty":10,"rate":1000}'
+
+<span class="c"># Response 201</span>
+{ "id": 6, "project_id": 2, "trade": "2 — Substructure", "description": "Test footing", "unit": "m³", "qty": 10, "rate": 1000 }</pre>
+        </div>
+
+        <div class="ep" id="boq-delitem">
+          <h3><span class="method m-delete">DELETE</span><span class="path">/api/boq/items/:id</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Delete a line item the user owns.</p>
+          <pre>curl -s -X DELETE http://localhost:3000/api/boq/items/6 -H "Authorization: Bearer $TOKEN"
+<span class="c"># Response 200</span>
+{ "ok": true }</pre>
+        </div>
+
+        <div class="ep" id="tenders-list">
+          <h3><span class="method m-get">GET</span><span class="path">/api/tenders</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Public. Optional query filters: <code>region</code>, <code>trade</code>, <code>size</code> (exact match). Sorted by <code>deadline</code> ascending. Fields: <code>title, org, region, trade, size, deadline, type, bid_doc_fee, created_by_name</code>.</p>
+          <pre>curl -s "http://localhost:3000/api/tenders?region=Oromia"
+
+<span class="c"># Response 200</span>
+[ { "id": 2, "title": "Upgrading of 14 km Rural Feeder Road", "org": "Oromia Road Development Agency",
+    "region": "Oromia", "trade": "Road", "size": "Br 10M–50M", "deadline": "2026-11-02",
+    "type": "Public", "bid_doc_fee": "Br 380,000", "created_by": null, "created_by_name": null, "created_at": "…" } ]</pre>
+        </div>
+
+        <div class="ep" id="tenders-one">
+          <h3><span class="method m-get">GET</span><span class="path">/api/tenders/:id</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Public. Single tender; 404 if the id doesn't exist.</p>
+          <pre>curl -s http://localhost:3000/api/tenders/1</pre>
+        </div>
+
+        <div class="ep" id="tenders-create">
+          <h3><span class="method m-post">POST</span><span class="path">/api/tenders</span><span class="auth-tag admin">admin · contractor</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Publish a tender. Body: <code>title</code>*, <code>org</code>*, <code>region</code>*, <code>trade</code>*, <code>deadline</code>* (<code>YYYY-MM-DD</code>), optional <code>size</code>, <code>type</code> (<code>Public</code> default), <code>bid_doc_fee</code> (default <code>Br 0</code>).</p>
+          <pre>curl -s -X POST http://localhost:3000/api/tenders \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"title":"Curl Test Tender","org":"Test Org","region":"Addis Ababa","trade":"Building","size":"Under Br 10M","deadline":"2026-12-01"}'
+
+<span class="c"># Response 201 — full tender object with new id</span></pre>
+        </div>
+
+        <div class="ep" id="legal-list">
+          <h3><span class="method m-get">GET</span><span class="path">/api/legal</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Public. Optional <code>?q=</code> searches titles, Amharic titles, categories and English summaries (LIKE match). Fields include <code>title, title_am, category, language, source, summary_en, summary_am</code>.</p>
+          <pre>curl -s "http://localhost:3000/api/legal?q=seismic"
+
+<span class="c"># Response 200</span>
+[ { "id": 2, "title": "EBCS-8: Design of Structures for Earthquake Resistance", "title_am": "የመንቀጠቀጫ ንድፍ ደንብ",
+    "category": "Seismic Standard", "language": "EN", "source": "Ethiopian Building Code Standard",
+    "summary_en": "Seismic zoning and design loads for structures…", "summary_am": "…" } ]</pre>
+        </div>
+
+        <div class="ep" id="legal-one">
+          <h3><span class="method m-get">GET</span><span class="path">/api/legal/:id</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Public. Single document with both bilingual summaries.</p>
+          <pre>curl -s http://localhost:3000/api/legal/1</pre>
+        </div>
+
+        <div class="ep" id="legal-create">
+          <h3><span class="method m-post">POST</span><span class="path">/api/legal</span><span class="auth-tag admin">admin</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Add a document. Body: <code>title</code>*, <code>category</code>*, <code>source</code>*; optional <code>title_am</code>, <code>language</code> (default <code>EN</code>), <code>summary_en</code>, <code>summary_am</code>.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/legal \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"title":"New Directive","category":"Municipal Permit","source":"Negarit Gazeta"}'
+<span class="c"># Response 201 — full document object</span></pre>
+        </div>
+
+        <div class="ep" id="listings-list">
+          <h3><span class="method m-get">GET</span><span class="path">/api/listings</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Public. Filters: <code>plot</code> (exact), <code>style</code> (exact), <code>rooms</code> (min rooms), <code>budget</code> (<code>Under Br 5,000</code> / <code>Br 5,000–15,000</code> / <code>Br 15,000+</code>). Sorted by rating desc. Includes <code>designer_name</code> and <code>verified</code>.</p>
+          <pre>curl -s "http://localhost:3000/api/listings?budget=Under%20Br%205,000"
+
+<span class="c"># Response 200</span>
+[ { "id": 2, "title": "2BR Budget House Plan", "description": "2 bedrooms · 120 m² plot…",
+    "plot_size": "100–200 m²", "rooms": 2, "style": "Villa", "price": 3200, "file_types": "PDF",
+    "rating": 4.7, "verified_designer": 1, "designer_name": "Ato Dawit Kassa", "verified": 1 } ]</pre>
+        </div>
+
+        <div class="ep" id="listings-create">
+          <h3><span class="method m-post">POST</span><span class="path">/api/listings</span><span class="auth-tag admin">engineer · verified</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Create a storefront listing. Body: <code>title</code>*, <code>description</code>*, <code>price</code>* (positive ETB); optional <code>plot_size</code>, <code>rooms</code>, <code>style</code>, <code>file_types</code> (default <code>PDF</code>). Unverified engineers get 403.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/listings \
+  -H "Authorization: Bearer $ENGINEER_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"title":"Duplex Plan","description":"4 bedrooms…","price":12000,"style":"Modern","rooms":4}'
+<span class="c"># Response 201 — listing object</span></pre>
+        </div>
+
+        <div class="ep" id="orders-create">
+          <h3><span class="method m-post">POST</span><span class="path">/api/orders</span><span class="auth-tag admin">client · contractor</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Buy a design → funds held in escrow. Body: <code>listing_id</code>*, <code>method</code> (one of <code>Telebirr</code>, <code>CBE Birr</code>, <code>Chapa</code>, <code>Santim Pay</code>, <code>Bank Transfer</code> — default <code>Telebirr</code>). Amount is copied from the listing.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/orders \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"listing_id":1,"method":"Telebirr"}'
+
+<span class="c"># Response 201</span>
+{ "message": "Funds held in escrow. Files unlock after verification.",
+  "order": { "id": 1, "listing_id": 1, "buyer_id": 4, "amount": 8500, "method": "Telebirr",
+             "status": "escrow_held", "created_at": "…" } }</pre>
+        </div>
+
+        <div class="ep" id="orders-deliver">
+          <h3><span class="method m-post">POST</span><span class="path">/api/orders/:id/deliver</span><span class="auth-tag admin">engineer · seller</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Seller marks the drawing files as delivered → status <code>files_delivered</code>. Only the listing's own designer can call this.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/orders/1/deliver -H "Authorization: Bearer $ENGINEER_TOKEN"
+<span class="c"># Response 200 — order with status "files_delivered"</span></pre>
+        </div>
+
+        <div class="ep" id="orders-release">
+          <h3><span class="method m-post">POST</span><span class="path">/api/orders/:id/release</span><span class="auth-tag">🔑 JWT (buyer)</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">Buyer releases escrow after receiving files. 400 if status isn't <code>files_delivered</code> yet.</p>
+          <pre>curl -s -X POST http://localhost:3000/api/orders/1/release -H "Authorization: Bearer $TOKEN"
+
+<span class="c"># Response 200</span>
+{ "message": "Escrow released to designer", "order": { …, "status": "released" } }</pre>
+        </div>
+
+        <div class="ep" id="orders-mine">
+          <h3><span class="method m-get">GET</span><span class="path">/api/orders/mine</span><span class="auth-tag">🔑 JWT</span></h3>
+          <p style="color:var(--muted); font-size:.9rem;">The user's orders (listing title included); admins see all orders. Ordered newest first.</p>
+          <pre>curl -s http://localhost:3000/api/orders/mine -H "Authorization: Bearer $TOKEN"
+<span class="c"># Response 200</span>
+[ { "id": 1, "listing_id": 1, "buyer_id": 4, "amount": 8500, "method": "Telebirr",
+    "status": "escrow_held", "created_at": "…", "title": "G+1 Modern Family Villa" } ]</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">REST API reference — generated from the live Express routes in <code>server.js</code>. All example responses are real captured output.</p></div>
+    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li></ul></div>
+    <div><h4>Quick Links</h4><ul><li><a href="#auth">Authentication</a></li><li><a href="#errors">Status codes</a></li><li><a href="marketplace.html#join">Get a free account</a></li></ul></div>
+    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2026 YeMezgeb — API Documentation · 20 endpoints · JWT auth · SQLite backend</div>
+</footer>
+</body>
+</html>

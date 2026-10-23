@@ -1,0 +1,369 @@
+openapi: 3.0.3
+info:
+  title: YeMezgeb API
+  version: 1.0.0
+  description: |
+    REST API for the Free Ethiopian Construction, Bidding & Blueprint Marketplace.
+    Modules: Auth, BoQ Generator (SMM East Africa / ETB), Top Bid tenders,
+    Negarit Gazeta legal repository (Amharic + English), and the P2P design
+    marketplace with escrow payments (Telebirr, CBE Birr, Chapa, Santim Pay).
+servers:
+  - url: http://localhost:3000
+    description: Local development
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        error: { type: string, example: "Login required" }
+    User:
+      type: object
+      properties:
+        id: { type: integer, example: 4 }
+        name: { type: string, example: "Sara Bekele" }
+        email: { type: string, example: "sara@example.com" }
+        role: { type: string, enum: [client, engineer, contractor, admin] }
+        verified: { type: integer, example: 1 }
+        license_no: { type: string, nullable: true, example: "ERA-AC-2019-04512" }
+    BoqProject:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        name: { type: string, example: "G+1 Residence — Bole, Addis Ababa" }
+        currency: { type: string, example: "ETB" }
+        created_at: { type: string, example: "2026-10-21 14:51:08" }
+    BoqItem:
+      type: object
+      properties:
+        id: { type: integer }
+        project_id: { type: integer }
+        trade: { type: string, example: "2 — Substructure & Foundations" }
+        description: { type: string, example: "C-25 reinforced concrete footing" }
+        unit: { type: string, example: "m³" }
+        qty: { type: number, example: 18.5 }
+        rate: { type: number, example: 14300 }
+    Tender:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string, example: "Construction of 3B+G+8 Mixed-Use Building" }
+        org: { type: string, example: "Addis Ababa City Administration" }
+        region: { type: string, example: "Addis Ababa" }
+        trade: { type: string, example: "Building" }
+        size: { type: string, example: "Above Br 50M" }
+        deadline: { type: string, format: date, example: "2026-11-08" }
+        type: { type: string, enum: [Public, Private] }
+        bid_doc_fee: { type: string, example: "Br 2,150,000" }
+    LegalDoc:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string, example: "Building Proclamation No. 624/2009" }
+        title_am: { type: string, nullable: true, example: "የሕነት አዋጅ ቁጥር ፮፻፳፬" }
+        category: { type: string, example: "Seismic Standard" }
+        language: { type: string, example: "አማርኛ / EN" }
+        source: { type: string, example: "Negarit Gazeta" }
+        summary_en: { type: string, nullable: true }
+        summary_am: { type: string, nullable: true }
+    Listing:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string, example: "G+1 Modern Family Villa" }
+        description: { type: string }
+        plot_size: { type: string, example: "100–200 m²" }
+        rooms: { type: integer, example: 3 }
+        style: { type: string, example: "Modern" }
+        price: { type: number, example: 8500 }
+        file_types: { type: string, example: "DWG + PDF" }
+        rating: { type: number, example: 4.9 }
+        verified_designer: { type: integer, example: 1 }
+        designer_name: { type: string, example: "Ato Dawit Kassa" }
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        listing_id: { type: integer }
+        buyer_id: { type: integer }
+        amount: { type: number, example: 8500 }
+        method: { type: string, enum: [Telebirr, "CBE Birr", Chapa, "Santim Pay", "Bank Transfer"] }
+        status: { type: string, enum: [escrow_held, files_delivered, released, refunded] }
+        created_at: { type: string }
+security:
+  - bearerAuth: []
+paths:
+  /api/auth/register:
+    post:
+      summary: Register an account
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string, minLength: 8 }
+                role: { type: string, enum: [client, engineer, contractor], default: client }
+                license_no: { type: string, description: "Required when role=engineer" }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { type: object, properties: { token: { type: string }, user: { $ref: "#/components/schemas/User" } } } } } }
+        "400": { description: Validation failed, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "409": { description: Email already registered, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/auth/login:
+    post:
+      summary: Log in
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, properties: { token: { type: string }, user: { $ref: "#/components/schemas/User" } } } } } }
+        "401": { description: Wrong credentials, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/auth/me:
+    get:
+      summary: Current user profile
+      tags: [Auth]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/User" } } } }
+        "401": { description: Unauthorized, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/boq/projects:
+    get:
+      summary: List my BoQ projects
+      tags: [BoQ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/BoqProject" } } } } }
+    post:
+      summary: Create a BoQ project
+      tags: [BoQ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/BoqProject" } } } }
+        "400": { description: Validation failed, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/boq/projects/{id}/items:
+    get:
+      summary: Get project with line items (owner only)
+      tags: [BoQ]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, properties: { project: { $ref: "#/components/schemas/BoqProject" }, items: { type: array, items: { $ref: "#/components/schemas/BoqItem" } } } } } } }
+        "404": { description: Project not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    post:
+      summary: Add a line item
+      tags: [BoQ]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [trade, description, qty, rate]
+              properties:
+                trade: { type: string }
+                description: { type: string }
+                unit: { type: string, default: "No." }
+                qty: { type: number, minimum: 0 }
+                rate: { type: number, minimum: 0 }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/BoqItem" } } } }
+  /api/boq/items/{id}:
+    delete:
+      summary: Delete a line item (owner only)
+      tags: [BoQ]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Deleted, content: { application/json: { schema: { type: object, properties: { ok: { type: boolean } } } } } }
+        "404": { description: Item not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/tenders:
+    get:
+      summary: List tenders (public)
+      tags: [Tenders]
+      security: []
+      parameters:
+        - { name: region, in: query, schema: { type: string }, example: "Oromia" }
+        - { name: trade, in: query, schema: { type: string }, example: "Building" }
+        - { name: size, in: query, schema: { type: string }, example: "Br 10M–50M" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Tender" } } } } }
+    post:
+      summary: Publish a tender
+      tags: [Tenders]
+      description: Requires role admin or contractor.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, org, region, trade, deadline]
+              properties:
+                title: { type: string }
+                org: { type: string }
+                region: { type: string }
+                trade: { type: string }
+                size: { type: string }
+                deadline: { type: string, format: date }
+                type: { type: string, enum: [Public, Private], default: Public }
+                bid_doc_fee: { type: string, default: "Br 0" }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Tender" } } } }
+        "400": { description: Validation failed, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "403": { description: Forbidden for role, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/tenders/{id}:
+    get:
+      summary: Get one tender (public)
+      tags: [Tenders]
+      security: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Tender" } } } }
+        "404": { description: Tender not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/legal:
+    get:
+      summary: Search legal documents (public, Amharic + English)
+      tags: [Legal]
+      security: []
+      parameters:
+        - { name: q, in: query, schema: { type: string }, description: "LIKE search across titles, categories and summaries" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/LegalDoc" } } } } }
+    post:
+      summary: Add a document
+      tags: [Legal]
+      description: Requires role admin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, category, source]
+              properties:
+                title: { type: string }
+                title_am: { type: string }
+                category: { type: string }
+                language: { type: string, default: "EN" }
+                source: { type: string }
+                summary_en: { type: string }
+                summary_am: { type: string }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/LegalDoc" } } } }
+        "403": { description: Forbidden for role, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/legal/{id}:
+    get:
+      summary: Get one document (public)
+      tags: [Legal]
+      security: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/LegalDoc" } } } }
+        "404": { description: Document not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/listings:
+    get:
+      summary: Search design listings (public)
+      tags: [Marketplace]
+      security: []
+      parameters:
+        - { name: plot, in: query, schema: { type: string }, example: "100–200 m²" }
+        - { name: budget, in: query, schema: { type: string, enum: ["Under Br 5,000", "Br 5,000–15,000", "Br 15,000+"] } }
+        - { name: rooms, in: query, schema: { type: integer }, description: "Minimum rooms" }
+        - { name: style, in: query, schema: { type: string }, example: "Modern" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Listing" } } } } }
+    post:
+      summary: Create a listing
+      tags: [Marketplace]
+      description: Requires role engineer with admin-verified credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description, price]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                price: { type: number, description: "Positive ETB" }
+                plot_size: { type: string }
+                rooms: { type: integer }
+                style: { type: string }
+                file_types: { type: string, default: "PDF" }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Listing" } } } }
+        "403": { description: Storefront not verified, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/orders:
+    post:
+      summary: Buy a design — funds held in escrow
+      tags: [Marketplace]
+      description: Requires role client or contractor.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listing_id]
+              properties:
+                listing_id: { type: integer }
+                method: { type: string, enum: [Telebirr, "CBE Birr", Chapa, "Santim Pay", "Bank Transfer"], default: Telebirr }
+      responses:
+        "201": { description: Escrow held, content: { application/json: { schema: { $ref: "#/components/schemas/Order" } } } }
+        "404": { description: Listing not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/orders/{id}/deliver:
+    post:
+      summary: Seller marks files delivered
+      tags: [Marketplace]
+      description: Requires role engineer (the listing's designer). Sets status to files_delivered.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Delivered, content: { application/json: { schema: { $ref: "#/components/schemas/Order" } } } }
+  /api/orders/{id}/release:
+    post:
+      summary: Buyer releases escrow
+      tags: [Marketplace]
+      description: Only after status is files_delivered; otherwise 400.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Released, content: { application/json: { schema: { $ref: "#/components/schemas/Order" } } } }
+        "400": { description: Escrow not releasable yet, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/orders/mine:
+    get:
+      summary: My orders
+      tags: [Marketplace]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Order" } } } } }

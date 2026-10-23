@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negarit Gazeta Civil/Construction Hub — Laws &amp; Standards | YeMezgeb</title>
+<meta name="description" content="Searchable repository of Ethiopian construction codes, building proclamations, urban planning regulations and Negarit Gazeta publications — in Amharic and English.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="brand"><span class="logo" aria-hidden="true">የግ</span><span>YeMezgeb<small>የግንባታ መድረክ · Build Free</small></span></a>
+    <nav aria-label="Main navigation">
+      <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="boq.html">BoQ Generator</a></li>
+        <li><a href="tenders.html">Top Bid</a></li>
+        <li><a href="legal.html" aria-current="page">Legal Hub</a></li>
+        <li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html">API Docs</a></li>
+      </ul>
+      <a href="marketplace.html#join" class="nav-cta">Join Free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="kicker" style="color:var(--yellow);">Module 3</span>
+      <h1>Negarit Gazeta Civil/Construction Hub</h1>
+      <p>የሕግና ደንብ ማዘጋጃ — Search Ethiopia's construction codes, building proclamations and urban planning regulations in <strong>አማርኛ እና እንግሊዝኛ</strong>.</p>
+      <div style="margin-top:1.2rem; max-width:640px;">
+        <label class="sr-only" for="q">Search documents</label>
+        <input id="q" type="search" placeholder="Search e.g. building proclamation, seismic, ሕነት…" oninput="searchDocs()">
+      </div>
+    </div>
+  </section>
+
+  <section id="standards">
+    <div class="container">
+      <div class="grid grid-4" style="margin-bottom:1.5rem;">
+        <span class="chip" style="padding:.5rem 1rem;">🌍 Seismic standards</span>
+        <span class="chip" style="padding:.5rem 1rem;">🌿 Environmental regulations</span>
+        <span class="chip" style="padding:.5rem 1rem;">📐 Structural guidelines</span>
+        <span class="chip" style="padding:.5rem 1rem;">🏛️ Municipal permits</span>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="Regulatory documents">
+          <thead><tr><th>Document</th><th>Category</th><th>Language</th><th>Source</th></tr></thead>
+          <tbody id="doc-body"><tr><td colspan="4" style="color:var(--muted);">Loading documents from the repository…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="note">Full texts and bilingual summaries open in the reader view — fast, low-bandwidth pages for 2G/3G connections. This repository syncs with official Negarit Gazeta publications; admins can add new documents via the API.</div>
+    </div>
+  </section>
+
+  <section style="background:var(--card); border-top:1px solid var(--line);">
+    <div class="container grid grid-3">
+      <div class="card"><h3>Bilingual Summaries</h3><p>Every document carries an English and አማርኛ plain-language summary so contractors and homeowners can act on the law, not just cite it.</p></div>
+      <div class="card"><h3>Instant Search</h3><p>Search across titles, categories and summaries — results ranked, cached in Redis, optimized to load under 3 seconds on mobile networks.</p></div>
+      <div class="card"><h3>Stay Current</h3><p>New Gazeta publications and code amendments are added on release, with highlights of what changed for builders.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><h4>YeMezgeb · የግንባታ መድረክ</h4><p style="font-size:.9rem;">Free access to Ethiopia's construction legal and regulatory knowledge base, in Amharic and English.</p></div>
+    <div><h4>Modules</h4><ul><li><a href="boq.html">BoQ Generator</a></li><li><a href="tenders.html">Top Bid</a></li><li><a href="legal.html">Legal Hub</a></li><li><a href="marketplace.html">Design Market</a></li>
+        <li><a href="api-docs.html">API Docs</a></li></ul></div>
+    <div><h4>Categories</h4><ul><li>Seismic standards</li><li>Environmental regulations</li><li>Structural guidelines</li><li>Municipal permits</li></ul></div>
+    <div><h4>Contact</h4><ul><li>Addis Ababa, Ethiopia</li><li><a href="mailto:hello@yemezgeb.et">hello@yemezgeb.et</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2026 YeMezgeb — Module 3: Digital Legal &amp; Regulatory Repository. Legal texts belong to their official publishers.</div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var docs = [];
+function renderDocs(list){
+  var body = document.getElementById('doc-body');
+  if(!list.length){ body.innerHTML = '<tr><td colspan="4" style="color:var(--muted);">No documents match your search.</td></tr>'; return; }
+  body.innerHTML = '';
+  list.forEach(function(d){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td></td><td>'+d.category+'</td><td></td><td>'+d.source+'</td>';
+    tr.cells[0].textContent = d.title + (d.title_am ? ' (' + d.title_am + ')' : '');
+    tr.cells[2].textContent = d.language;
+    body.appendChild(tr);
+  });
+}
+async function searchDocs(){
+  var q = document.getElementById('q').value.trim();
+  try { docs = await ymApi('/api/legal' + (q ? '?q=' + encodeURIComponent(q) : '')); renderDocs(docs); }
+  catch(e){ document.getElementById('doc-body').innerHTML = '<tr><td colspan="4">Could not reach the API — start the server with <code>npm start</code>.</td></tr>'; }
+}
+searchDocs();
+</script>
+</body>
+</html>
